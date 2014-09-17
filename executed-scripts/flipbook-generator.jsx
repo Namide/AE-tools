@@ -5,17 +5,15 @@
 	| |   | |_/\| ||  __/| |_\\| \_/|| \_/||   \   | |_//|  /_ | | \||
 	\_/   \____/\_/\_/   \____/\____/\____/\_|\_\  \____\\____\\_/  \|
 	
-										By Damien Doussaud - namide.com
+									   By Damien Doussaud - namide.com
 	
 	
     Usage: 
 	
-		Select layers in AE. 
+		Select layers in AE (the pages of your Flipbook). 
 		Select File -> Script -> Run script... from the menu and run this script.
 
  */
-
-
 
 function generate( list )
 {
@@ -33,6 +31,8 @@ function generate( list )
 	var slider1 = nullObj.property("Effects").addProperty("ADBE Slider Control");
 	slider1.name = "page"
 	slider1.property(1).setValue(0.0);
+	slider1.property(1).expression = "time;";
+	
 	var slider2 = nullObj.property("Effects").addProperty("ADBE Slider Control");
 	slider2.name = "slow"
 	slider2.property(1).setValue(1.0);
@@ -46,9 +46,14 @@ function generate( list )
     for ( var i = list.length-1; i > -1; i-- )
     {
         var layer = list[i];
-		layer.motionBlur = true;
-		layer.threeDLayer = true;
-		layer.parent = nullObj;
+        layer.motionBlur = true;
+        layer.threeDLayer = true;
+        layer.parent = nullObj;
+    }
+    
+    for ( i = list.length-1; i > -1; i-- )
+    {
+        var layer = list[i];
 		
 		var p = layer.transform[ "Position" ];
         p.expressionEnabled = true;
@@ -70,16 +75,28 @@ function generate( list )
         p.expressionEnabled = true;
         script = 'var flipbookObj = thisComp.layer("'+nullName+'");\n';
 		script += 'var pageNum = index - flipbookObj.index;\n';
-		script += 'var r = flipbookObj.effect("page")("Curseur");\n';
-		script += 'var rMin = pageNum - flipbookObj.effect("slow")("Curseur");\n';
-		script += 'var rMax = pageNum + flipbookObj.effect("slow")("Curseur");\n';
+		script += '\n';
+		script += '\n';
+		script += 'var output = transform.anchorPoint;\n';
 		script += 'var rota = 0;\n';
-		script += 'if ( r <= rMin  ) rota  = 0;\n';
-		script += 'else if ( r >= rMax  ) rota  = 180;\n';
+		script += 'if ( pageNum % 2 == 0 )\n';
+		script += '{\n';
+		script += '	rota = thisComp.layer(index-1).transform.yRotation - 180;\n';
+		script += '}\n';
 		script += 'else\n';
 		script += '{\n';
-		script += '	rota = 180 * (r - rMin) / (rMax - rMin);\n';
+		script += '	var r = flipbookObj.effect("page")("Curseur");\n';
+		script += '	var rMin = pageNum - flipbookObj.effect("slow")("Curseur");\n';
+		script += '	var rMax = pageNum + flipbookObj.effect("slow")("Curseur");\n';
+		script += '\n';
+		script += '	if ( r <= rMin  ) rota  = 0;\n';
+		script += '	else if ( r >= rMax  ) rota  = 180;\n';
+		script += '	else\n';
+		script += '	{\n';
+		script += '		rota = 180 * (r - rMin) / (rMax - rMin);\n';
+		script += '	}\n';
 		script += '}\n';
+		script += '\n';
 		script += 'rota ;\n';
 		p.expression = script;
 		
