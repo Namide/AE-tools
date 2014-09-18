@@ -43,12 +43,25 @@ function generate( list )
 	slider4.name = "thickness"
 	slider4.property(1).setValue(0.5);
 	
+	
+	var light = app.project.activeItem.layers.addLight( nullName+"light", [0,0] );
+	light.lightType = LightType.POINT;
+	light.lightOption.castsShadows.setValue( 1 ); 
+	light.lightOption.shadowDarkness.setValue( 20 );
+	light.lightOption.shadowDiffusion.setValue( 16 );
+	light.parent = nullObj;
+	light.transform.position.setValue([ 0, 0, -2048]);
+	
     for ( var i = list.length-1; i > -1; i-- )
     {
         var layer = list[i];
         layer.motionBlur = true;
         layer.threeDLayer = true;
         layer.parent = nullObj;
+		
+		layer.materialOption.castsShadows.setValue( 1 );
+		layer.materialOption.acceptsShadows.setValue( true );
+		layer.materialOption.acceptsLights.setValue( false );
     }
     
     for ( i = list.length-1; i > -1; i-- )
