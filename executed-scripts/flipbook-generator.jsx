@@ -13,6 +13,12 @@
 		Select layers in AE (the pages of your Flipbook). 
 		Select File -> Script -> Run script... from the menu and run this script.
 
+	To do list:
+		
+		Backface culling if flipbook is in composition 3D
+		Book thickness if pages < 0 or > maximum
+		Better effect for bending pages
+		
  */
 
 function generate( list )
