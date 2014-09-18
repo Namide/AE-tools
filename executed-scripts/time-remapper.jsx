@@ -34,20 +34,22 @@
 
 function hasTag( layer, tag )
 {
-    var n = layer.name;
-    var a = n.split(".");
-    
-    for ( var i = 0; i < a.length; i++ )
-    {
-        if (    tag == "time" &&
-                a[i].charAt(0) == "t" &&
-                a[i].substr(1) == String(Number( a[i].substr(1) )) )
-        {
-            return true;
-        }
-        if ( a[i] == tag ) return true;
-    }
-    return false;
+	if( tag == ".time" )
+	{
+		var n = layer.name;
+		var a = n.split(".");
+		
+		for ( var i = 0; i < a.length; i++ )
+		{
+			if (    a[i].charAt(0) == "t" &&
+					a[i].substr(1) == String(Number( a[i].substr(1) )) )
+			{
+				return true;
+			}
+		}
+	}
+
+	return layer.name.indexOf(tag) > -1;
 }
 
 function getTimeByTag( layer )
@@ -76,9 +78,12 @@ function remap( list )
         var tTrans = 0;
     
         var t = 0;
-        if ( layer.matchName == "ADBE AV Layer" )
+        //if ( layer.matchName == "ADBE AV Layer" )
+		if ( layer.source != null && layer.source.layers != null )
         {
-            var lc = layer.source.layers;
+		    var lc = layer.source.layers;
+            //alert(lc.name);
+			//var lc = layer.containingComp.layers;
             var list2 = [];
             for ( var j = 1; j <= lc.length ; j++ )
             {
@@ -87,34 +92,36 @@ function remap( list )
             t = remap( list2 );
             layer.source.duration = t;
         }
-        else if ( layer.matchName == "ADBE Text Layer" )
+        //else if ( layer.matchName == "ADBE Text Layer" )
+		//else if ( layer.property("sourceText") !== null )
+		else if ( layer instanceof TextLayer )
         {
             var carPerS = 25;
             t = layer.property("sourceText").value.text.length / carPerS;
             if ( t < 1 ) t = 1;
-            if ( hasTag( layer, "time" ) ) t = getTimeByTag(layer);    
-            if ( !hasTag( layer, "noTransition" ) ) tTrans = addTween(layer, "alpha");
+            if ( hasTag( layer, ".time" ) ) t = getTimeByTag(layer);    
+            if ( !hasTag( layer, ".noTransition" ) ) tTrans = addTween(layer, "alpha");
         }
         else
         {
             t = 3;
-            if ( hasTag( layer, "time" ) ) t = getTimeByTag(layer);    
-            if ( !hasTag( layer, "noTransition" ) ) tTrans = addTween(layer, "alpha");
+            if ( hasTag( layer, ".time" ) ) t = getTimeByTag(layer);    
+            if ( !hasTag( layer, ".noTransition" ) ) tTrans = addTween(layer, "alpha");
         }
         
-        if ( hasTag( layer, "up" ) ) tTrans = addTween( layer, "up" );
-        if ( hasTag( layer, "down" ) ) tTrans = addTween( layer, "down" );
-        if ( hasTag( layer, "right" ) ) tTrans = addTween( layer, "right" );
-        if ( hasTag( layer, "left" ) ) tTrans = addTween( layer, "left" );
-        if ( hasTag( layer, "back" ) ) tTrans = addTween( layer, "back" );
-        if ( hasTag( layer, "front" ) ) tTrans = addTween( layer, "front" );
-        if ( hasTag( layer, "back" ) ) tTrans = addTween( layer, "back" );     
+        if ( hasTag( layer, ".up" ) ) tTrans = addTween( layer, "up" );
+        if ( hasTag( layer, ".down" ) ) tTrans = addTween( layer, "down" );
+        if ( hasTag( layer, ".right" ) ) tTrans = addTween( layer, "right" );
+        if ( hasTag( layer, ".left" ) ) tTrans = addTween( layer, "left" );
+        if ( hasTag( layer, ".back" ) ) tTrans = addTween( layer, "back" );
+        if ( hasTag( layer, ".front" ) ) tTrans = addTween( layer, "front" );
+        if ( hasTag( layer, ".back" ) ) tTrans = addTween( layer, "back" );     
         
         t += tTrans;
         
         layer.startTime = d;
         layer.outPoint = t + d;
-        if ( !hasTag( layer, "unlinked" ) ) d += t;
+        if ( !hasTag( layer, ".unlinked" ) ) d += t;
     }
     
     return d;
@@ -122,11 +129,22 @@ function remap( list )
 
 function startRemmaping()
 {
-    var layers = app.project.activeItem.selectedLayers;
-    var t = remap( layers );
-    app.project.activeItem.workAreaDuration = t;
-    app.project.activeItem.duration = t + 1;
-    return t;
+	if ( 	app.project.activeItem == null ||
+			app.project.activeItem.selectedLayers == null ||
+			app.project.activeItem.selectedLayers.length < 1
+		)
+	{
+		alert('Selects layers in your project Oo\'');
+	}
+	else
+	{
+		var layers = app.project.activeItem.selectedLayers;
+		var t = remap( layers );
+		app.project.activeItem.workAreaDuration = t;
+		app.project.activeItem.duration = t + 1;
+		return t;
+	}
+    return 0;
 }
 
 function addTween( layer, tween )

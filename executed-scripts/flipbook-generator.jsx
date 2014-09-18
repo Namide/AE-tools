@@ -23,8 +23,13 @@
 
 function generate( list )
 {
-	if ( app.project.activeItem == null )
-		alert('Namide: Selects layers in your project Oo\''); 
+	if ( 	app.project.activeItem == null ||
+			app.project.activeItem.selectedLayers == null ||
+			app.project.activeItem.selectedLayers.length < 1 )
+	{
+		alert('Selects layers in your project Oo\''); 
+		return false;
+	}
 	
 	var list = app.project.activeItem.selectedLayers;
     
