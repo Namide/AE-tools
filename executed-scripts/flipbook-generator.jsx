@@ -21,7 +21,7 @@
 		
  */
 
-function generate( list )
+function start()
 {
 	if ( 	app.project.activeItem == null ||
 			app.project.activeItem.selectedLayers == null ||
@@ -30,7 +30,16 @@ function generate( list )
 		alert('Selects layers in your project Oo\''); 
 		return false;
 	}
+
+	app.beginUndoGroup("Flipbook generator");
+	generate();
+	app.endUndoGroup();
 	
+	return true;
+}
+ 
+function generate()
+{
 	var list = app.project.activeItem.selectedLayers;
     
 	var nullName = "flipbook" + Math.round( Math.random() * 1000 );
@@ -203,8 +212,6 @@ function generate( list )
 		p.expression = script;
 		
     }
-    
-    return true;
 }
 
-generate();
+start();

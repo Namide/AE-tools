@@ -114,8 +114,7 @@ function remap( list )
         if ( hasTag( layer, ".right" ) ) tTrans = addTween( layer, "right" );
         if ( hasTag( layer, ".left" ) ) tTrans = addTween( layer, "left" );
         if ( hasTag( layer, ".back" ) ) tTrans = addTween( layer, "back" );
-        if ( hasTag( layer, ".front" ) ) tTrans = addTween( layer, "front" );
-        if ( hasTag( layer, ".back" ) ) tTrans = addTween( layer, "back" );     
+        if ( hasTag( layer, ".front" ) ) tTrans = addTween( layer, "front" );     
         
         t += tTrans;
         
@@ -138,10 +137,13 @@ function startRemmaping()
 	}
 	else
 	{
-		var layers = app.project.activeItem.selectedLayers;
-		var t = remap( layers );
-		app.project.activeItem.workAreaDuration = t;
-		app.project.activeItem.duration = t + 1;
+		app.beginUndoGroup("Time remapper");
+			var layers = app.project.activeItem.selectedLayers;
+			var t = remap( layers );
+			app.project.activeItem.workAreaDuration = t;
+			app.project.activeItem.duration = t + 1;
+		app.endUndoGroup();
+	
 		return t;
 	}
     return 0;
