@@ -1,3 +1,7 @@
+/*
+	TWEENS
+	Copy/paste this script in the script property of the layer
+*/
 
 var introTime = 1;
 var introDatas = [ 0, 0, 0 ];
@@ -10,64 +14,7 @@ var endTween = easeInQuint;
 var dontStop = false;
 var relative = false;
 
-
-
 /*
-
-	CALCULATION
-
-*/
-
-var newDatas = [];
-var depth = ( thisProperty.value == Number(thisProperty.value) ) ? 1 : thisProperty.value.length;
-var datas = ( depth < 2 ) ? new Array(thisProperty) : thisProperty.value;
-
-var i;
-if( dontStop )
-{
-	var totalTime = outPoint - inPoint;
-	var ratio = introTime / ( introTime + endTime );
-	introTime = totalTime * ratio;
-	endTime = totalTime * ( 1 - ratio );
-}
-if( relative )
-{
-	for ( i = 0; i < depth; i++ )
-	{
-		 introDatas[i] += datas[i];
-		 endDatas[i] += datas[i];
-	}
-}
-
-
-if ( time < inPoint  )
-{
-	for ( i = 0; i < depth; i++ ) newDatas[i] = introDatas[i];
-}
-else if ( time < inPoint + introTime )
-{
-	for ( i = 0; i < depth; i++ ) newDatas[i] = introTween( time-inPoint, introDatas[i], datas[i]-introDatas[i], introTime );
-}
-else if( time > outPoint )
-{
-	for ( i = 0; i < depth; i++ ) newDatas[i] = endDatas[i];
-}
-else if ( time > outPoint - endTime )
-{
-	for ( i = 0; i < depth; i++ ) newDatas[i] = endTween( time + endTime - outPoint, datas[i], endDatas[i]-datas[i], endTime );
-}
-else
-{
-	for ( i = 0; i < depth; i++ ) newDatas[i] = datas[i];
-}
-
-if ( depth < 2 ) newDatas[0];
-else newDatas;
-
-
-/*
-
-
 	List of transitions:
 
 		easeNone
@@ -121,9 +68,60 @@ else newDatas;
 		b - starting value of property
 		c - change needed in value
 		d - total duration of tween
-
-
 */
+
+
+
+/*
+	CALCULATION
+*/
+
+var newDatas = [];
+var depth = ( thisProperty.value == Number(thisProperty.value) ) ? 1 : thisProperty.value.length;
+var datas = ( depth < 2 ) ? new Array(thisProperty) : thisProperty.value;
+
+var i;
+if( dontStop )
+{
+	var totalTime = outPoint - inPoint;
+	var ratio = introTime / ( introTime + endTime );
+	introTime = totalTime * ratio;
+	endTime = totalTime * ( 1 - ratio );
+}
+if( relative )
+{
+	for ( i = 0; i < depth; i++ )
+	{
+		 introDatas[i] += datas[i];
+		 endDatas[i] += datas[i];
+	}
+}
+
+
+if ( time < inPoint  )
+{
+	for ( i = 0; i < depth; i++ ) newDatas[i] = introDatas[i];
+}
+else if ( time < inPoint + introTime )
+{
+	for ( i = 0; i < depth; i++ ) newDatas[i] = introTween( time-inPoint, introDatas[i], datas[i]-introDatas[i], introTime );
+}
+else if( time > outPoint )
+{
+	for ( i = 0; i < depth; i++ ) newDatas[i] = endDatas[i];
+}
+else if ( time > outPoint - endTime )
+{
+	for ( i = 0; i < depth; i++ ) newDatas[i] = endTween( time + endTime - outPoint, datas[i], endDatas[i]-datas[i], endTime );
+}
+else
+{
+	for ( i = 0; i < depth; i++ ) newDatas[i] = datas[i];
+}
+
+if ( depth < 2 ) newDatas[0];
+else newDatas;
+
 function easeNone(t, b, c, d)
 {
 	return c*t/d + b;
