@@ -1,4 +1,4 @@
-﻿// Add markers
+// Add markers
 
 
 
@@ -21,7 +21,7 @@ windowsOptions.groupe.orientation = "column";
 
 var groupe1 = windowsOptions.groupe.add("panel", undefined, "Parameters");
 groupe1.orientation = "column";
-groupe1.alignChildren = ["fill","center"];
+groupe1.alignChildren = ["fill", "center"];
 
 var g2 = groupe1.add('group');
 g2.orientation = "row";
@@ -52,25 +52,26 @@ var markerDefaultTween = g5.add("edittext", undefined, mkTween);
 */
 
 start();
+
 function start() {
-	
-    if (app.project.activeItem == null) {
+
+	if (app.project.activeItem == null) {
 		return alert('Namide say: You must select 1 layer and 1 property (⁎˃ᆺ˂)');
 	}
-    
+
 	if (app.project.activeItem.selectedLayers.length != 1) {
 		return alert('Namide say: You must select 1 layer (⁎˃ᆺ˂)');
 	}
-	
+
 	if (app.project.activeItem.selectedProperties.length < 1) {
 		return alert('Namide say: You must select 1 or more properties (=^‥^=)');
 	}
-	
+
 	windowsOptions.show();
 }
 
 function process() {
-	
+
 	app.beginUndoGroup("marker tweens");
 	createMarker();
 	injectScript();
@@ -86,29 +87,30 @@ function process() {
 */
 
 function createMarker() {
-	
+
 	var i;
 	var length = markerNumber.text;
-    
-    for (i = 0; i<length; i++) {
-		
+	alert(length);
+
+	for (i = 0; i < length; i++) {
+
 		var mv = new MarkerValue("" /*"comment","chapter","url","frameTarget","cuePointName"*/ );
 
 		var parms = new Object();
-		parms.tfs1Value = this.parent.markerDefaultValue.text;
-		parms.tfs1Time = Number(this.parent.markerDefaultTime.text);
-		parms.tfs1Tween = this.parent.markerDefaultTween.text;
+		parms.tfs1Value = markerDefaultValue.text;
+		parms.tfs1Time = Number(markerDefaultTime.text);
+		parms.tfs1Tween = markerDefaultTween.text;
 		mv.setParameters(parms);
 
-		app.project.activeItem.selectedLayers[0].property("Marker").setValueAtTime( (app.project.activeItem.time + i + 1), mv);
+		app.project.activeItem.selectedLayers[0].property("Marker").setValueAtTime((app.project.activeItem.time + i + 1), mv);
 	}
-	
+
 }
 
 function injectScript() {
-	
-	var  i;
-	
+
+	var i;
+
 	for (i = 0; i < app.project.activeItem.selectedProperties.length; i++) {
 
 		app.project.activeItem.selectedProperties[i].expression = "m = thisLayer.marker;\n" +
@@ -435,46 +437,50 @@ function injectScript() {
 }
 
 function createDialog(titre, hasokbutton, okfonction) {
-	var f = new Window ("palette",titre,undefined,{closeButton:false,resizeable:false});
+	var f = new Window("palette", titre, undefined, {
+		closeButton: false,
+		resizeable: false
+	});
 	f.spacing = 2;
 	f.margins = 5;
-	f.alignChildren = ["fill","top"];
+	f.alignChildren = ["fill", "top"];
 	f.groupe = f.add("group");
-	f.groupe.alignChildren = ["fill","top"];
+	f.groupe.alignChildren = ["fill", "top"];
 	var fgroupeBoutons = addHGroup(f);
-	fgroupeBoutons.alignment = ["fill","bottom"];
+	fgroupeBoutons.alignment = ["fill", "bottom"];
 	fgroupeBoutons.margins = 10;
-	if (hasokbutton)
-	{
-		var fcancel = addButton(fgroupeBoutons,"Annuler");
-		fcancel.onClick = function() { f.hide(); };
-		fcancel.alignment = ["left","bottom"];
-		var fok = addButton(fgroupeBoutons,"OK");
-		fok.alignment = ["right","bottom"];
-		if (okfonction != undefined) fok.onClick = function() {
+	if (hasokbutton) {
+		var fcancel = addButton(fgroupeBoutons, "Annuler");
+		fcancel.onClick = function () {
+			f.hide();
+		};
+		fcancel.alignment = ["left", "bottom"];
+		var fok = addButton(fgroupeBoutons, "OK");
+		fok.alignment = ["right", "bottom"];
+		if (okfonction != undefined) fok.onClick = function () {
 			f.hide();
 			okfonction();
-			}
+		}
+	} else {
+		var fcancel = addButton(fgroupeBoutons, "Fermer");
+		fcancel.onClick = function () {
+			f.hide();
+		};
 	}
-	else
-	{
-		var fcancel = addButton(fgroupeBoutons,"Fermer");
-		fcancel.onClick = function() { f.hide(); };
-	}
-	
+
 	return f;
 }
 
 function addHGroup(conteneur) {
 	var groupe = conteneur.add("group");
-	groupe.alignChildren = ["fill","fill"];
+	groupe.alignChildren = ["fill", "fill"];
 	groupe.orientation = "row";
 	groupe.spacing = 2;
 	groupe.margins = 0;
 	return groupe;
 }
 
-function addButton(conteneur,texte) {
-	var bouton = conteneur.add("button",undefined,texte);
+function addButton(conteneur, texte) {
+	var bouton = conteneur.add("button", undefined, texte);
 	return bouton;
 }
