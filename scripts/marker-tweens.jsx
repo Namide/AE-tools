@@ -90,8 +90,6 @@ function createMarker() {
 
 	var i;
 	var length = markerNumber.text;
-	alert(length);
-
 	for (i = 0; i < length; i++) {
 
 		var mv = new MarkerValue("" /*"comment","chapter","url","frameTarget","cuePointName"*/ );
