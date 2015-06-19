@@ -107,14 +107,14 @@ function getTimeByTag( layer )
         {
             var n = Number( a[i].substr(1) );
             n /= 1000;
-            if ( n == null || n == NaN || n < 0 || n >= Infinity ) n = 1;
+            if ( n == null || n == NaN || n < 0 || n >= Infinity ) n = velocity;
             return n;
          }
     }
-    return 1;
+    return velocity;
 }
 
-function remap( list )
+function remap( list, velocity )
 {
     var d = 0;
     for ( var i = list.length-1; i > -1; i-- )
@@ -131,13 +131,13 @@ function remap( list )
             {
                 list2.push(lc[j]);
             }
-            t = remap( list2 );
+            t = remap( list2, velocity );
             layer.source.duration = t;
         }
         else if ( layer instanceof TextLayer )
         {
-            var carPerS = 25;
-            t = layer.property("sourceText").value.text.length * velocity / carPerS;
+            var carPerS = 25 / velocity;
+            t = layer.property("sourceText").value.text.length / carPerS;
             if ( t < velocity ) t = velocity;
             if ( hasTag( layer, ".time" ) ) t = getTimeByTag(layer);    
             if ( !hasTag( layer, ".noTransition" ) ) tTrans = addTween(layer, "alpha");
@@ -170,11 +170,11 @@ function process()
 {
 	
 	app.beginUndoGroup("Time remapper");
-		velocity = Number(velNumber.text);
+		velocity = 1 / Number(velNumber.text);
 		var layers = app.project.activeItem.selectedLayers;
-		var t = remap( layers );
+		var t = remap( layers, velocity );
 		app.project.activeItem.workAreaDuration = t;
-		app.project.activeItem.duration = t + velocity;
+		app.project.activeItem.duration = t;
 	app.endUndoGroup();
 
 	//return t;
@@ -275,7 +275,7 @@ function addTween( layer, tween )
         script += "function easeOutExpo(t, b, c, d) { return(t==d) ? b+c : c * 1.001 *(-Math.pow(2, -10 * t/d) + 1) + b; }\n";
         p.expression = script;
     }
-    return 2;
+    return 2 * velocity;
 }
 
 //startRemmaping();
