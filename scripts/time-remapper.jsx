@@ -1,4 +1,4 @@
-﻿/*
+/*
 	  __  _                                    
 	 / /_(_)_ _  ___                           
 	/ __/ /  ' \/ -_)                          
@@ -7,8 +7,8 @@
 	 / , _/ _// /|_/ / __ |/ ___/ ___/ _// , _/
 	/_/|_/___/_/  /_/_/ |_/_/  /_/  /___/_/|_| 
 	
-			  By Damien Doussaud - namide.com
-	
+			  by Damien Doussaud - namide.com
+				version: 2.0
 	
     Usage: 
 	
@@ -31,6 +31,51 @@
 		//.alpha (alpha transition [default])
     
  */
+
+var velocity = 1.0;
+
+var windowsOptions = createDialog("Time remapper", true, process);
+windowsOptions.groupe.orientation = "column";
+
+var groupe1 = windowsOptions.groupe.add("panel", undefined, "Parameters");
+groupe1.orientation = "column";
+groupe1.alignChildren = ["fill", "center"];
+
+var g2 = groupe1.add('group');
+g2.orientation = "row";
+g2.add("statictext", undefined, "velocity");
+var velNumber = g2.add("edittext", [0,0,40,20], velocity);
+
+
+/*
+
+		START
+
+*/
+
+start();
+function start() {
+
+	if ( 	app.project.activeItem == null ||
+			app.project.activeItem.selectedLayers == null ||
+			app.project.activeItem.selectedLayers.length < 1
+		)
+	{
+		alert('Selects layers in your project (=^‥^=)');
+	}
+	else
+	{
+		windowsOptions.show();
+	}
+	
+}
+
+
+/*
+
+		PROCESS
+
+*/
 
 function hasTag( layer, tag )
 {
@@ -78,12 +123,9 @@ function remap( list )
         var tTrans = 0;
     
         var t = 0;
-        //if ( layer.matchName == "ADBE AV Layer" )
-		if ( layer.source != null && layer.source.layers != null )
+        if ( layer.source != null && layer.source.layers != null )
         {
 		    var lc = layer.source.layers;
-            //alert(lc.name);
-			//var lc = layer.containingComp.layers;
             var list2 = [];
             for ( var j = 1; j <= lc.length ; j++ )
             {
@@ -92,19 +134,17 @@ function remap( list )
             t = remap( list2 );
             layer.source.duration = t;
         }
-        //else if ( layer.matchName == "ADBE Text Layer" )
-		//else if ( layer.property("sourceText") !== null )
-		else if ( layer instanceof TextLayer )
+        else if ( layer instanceof TextLayer )
         {
             var carPerS = 25;
-            t = layer.property("sourceText").value.text.length / carPerS;
-            if ( t < 1 ) t = 1;
+            t = layer.property("sourceText").value.text.length * velocity / carPerS;
+            if ( t < velocity ) t = velocity;
             if ( hasTag( layer, ".time" ) ) t = getTimeByTag(layer);    
             if ( !hasTag( layer, ".noTransition" ) ) tTrans = addTween(layer, "alpha");
         }
         else
         {
-            t = 3;
+            t = 3 * velocity;
             if ( hasTag( layer, ".time" ) ) t = getTimeByTag(layer);    
             if ( !hasTag( layer, ".noTransition" ) ) tTrans = addTween(layer, "alpha");
         }
@@ -116,37 +156,30 @@ function remap( list )
         if ( hasTag( layer, ".back" ) ) tTrans = addTween( layer, "back" );
         if ( hasTag( layer, ".front" ) ) tTrans = addTween( layer, "front" );     
         
-        t += tTrans;
+        t = (t + tTrans);
         
         layer.startTime = d;
-        layer.outPoint = t + d;
+        layer.outPoint = Number(t + d);
         if ( !hasTag( layer, ".unlinked" ) ) d += t;
     }
     
     return d;
 }
 
-function startRemmaping()
+function process()
 {
-	if ( 	app.project.activeItem == null ||
-			app.project.activeItem.selectedLayers == null ||
-			app.project.activeItem.selectedLayers.length < 1
-		)
-	{
-		alert('Selects layers in your project Oo\'');
-	}
-	else
-	{
-		app.beginUndoGroup("Time remapper");
-			var layers = app.project.activeItem.selectedLayers;
-			var t = remap( layers );
-			app.project.activeItem.workAreaDuration = t;
-			app.project.activeItem.duration = t + 1;
-		app.endUndoGroup();
 	
-		return t;
-	}
-    return 0;
+	app.beginUndoGroup("Time remapper");
+		velocity = Number(velNumber.text);
+		var layers = app.project.activeItem.selectedLayers;
+		var t = remap( layers );
+		app.project.activeItem.workAreaDuration = t;
+		app.project.activeItem.duration = t + velocity;
+	app.endUndoGroup();
+
+	//return t;
+	
+    //return 0;
 }
 
 function addTween( layer, tween )
@@ -157,8 +190,8 @@ function addTween( layer, tween )
         p.expressionEnabled = true;
         
         var script = "var o = 100;\n";
-        script += "if ( time < inPoint + 1 ) { o = linear(time, inPoint, inPoint + 1, 0, 100); }\n";
-        script += "else if ( time > outPoint - 1 ) { o = linear(time, outPoint - 1, outPoint, 100, 0); }\n";
+        script += "if ( time < inPoint + "+velocity+" ) { o = linear(time, inPoint, inPoint + "+velocity+", 0, 100); }\n";
+        script += "else if ( time > outPoint - "+velocity+" ) { o = linear(time, outPoint - "+velocity+", outPoint, 100, 0); }\n";
         script += "o;\n";
         p.expression = script;
     }
@@ -168,8 +201,8 @@ function addTween( layer, tween )
         p.expressionEnabled = true;
         
         var script = "var p = [transform.position[0], transform.position[1]];\n";
-        script += "if ( time < inPoint + 1 ) { p[1] = easeOutExpo( time-inPoint, p[1] - 1080, 1080, 1 ); }\n";
-        script += "else if ( time > outPoint - 1 ) { p[1] = easeInExpo( time-(outPoint-1), p[1], 1080, 1 ); }\n";
+        script += "if ( time < inPoint + "+velocity+" ) { p[1] = easeOutExpo( time-inPoint, p[1] - 1080, 1080, "+velocity+" ); }\n";
+        script += "else if ( time > outPoint - "+velocity+" ) { p[1] = easeInExpo( time-(outPoint-1), p[1], 1080, "+velocity+" ); }\n";
         script += "p;\n";
         script += "function easeInExpo(t, b, c, d) { return(t==0) ? b : c * Math.pow(2, 10 *(t/d - 1)) + b - c * 0.001; }\n";
         script += "function easeOutExpo(t, b, c, d) { return(t==d) ? b+c : c * 1.001 *(-Math.pow(2, -10 * t/d) + 1) + b; }\n";
@@ -181,8 +214,8 @@ function addTween( layer, tween )
         p.expressionEnabled = true;
         
         var script = "var p = [transform.position[0], transform.position[1]];\n";
-        script += "if ( time < inPoint + 1 ) { p[1] = easeOutExpo( time-inPoint, p[1] + 1080, -1080, 1 ); }\n";
-        script += "else if ( time > outPoint - 1 ) { p[1] = easeInExpo( time-(outPoint-1), p[1], -1080, 1 ); }\n";
+        script += "if ( time < inPoint + "+velocity+" ) { p[1] = easeOutExpo( time-inPoint, p[1] + 1080, -1080, "+velocity+" ); }\n";
+        script += "else if ( time > outPoint - "+velocity+" ) { p[1] = easeInExpo( time-(outPoint-1), p[1], -1080, "+velocity+" ); }\n";
         script += "p;\n";
         script += "function easeInExpo(t, b, c, d) { return(t==0) ? b : c * Math.pow(2, 10 *(t/d - 1)) + b - c * 0.001; }\n";
         script += "function easeOutExpo(t, b, c, d) { return(t==d) ? b+c : c * 1.001 *(-Math.pow(2, -10 * t/d) + 1) + b; }\n";
@@ -194,8 +227,8 @@ function addTween( layer, tween )
         p.expressionEnabled = true;
         
         var script = "var p = [transform.position[0], transform.position[1]];\n";
-        script += "if ( time < inPoint + 1 ) { p[0] = easeOutExpo( time-inPoint, p[0] + 1920, -1920, 1 ); }\n";
-        script += "else if ( time > outPoint - 1 ) { p[0] = easeInExpo( time-(outPoint-1), p[0], -1920, 1 ); }\n";
+        script += "if ( time < inPoint + "+velocity+" ) { p[0] = easeOutExpo( time-inPoint, p[0] + 1920, -1920, "+velocity+" ); }\n";
+        script += "else if ( time > outPoint - "+velocity+" ) { p[0] = easeInExpo( time-(outPoint-1), p[0], -1920, "+velocity+" ); }\n";
         script += "p;\n";
         script += "function easeInExpo(t, b, c, d) { return(t==0) ? b : c * Math.pow(2, 10 *(t/d - 1)) + b - c * 0.001; }\n";
         script += "function easeOutExpo(t, b, c, d) { return(t==d) ? b+c : c * 1.001 *(-Math.pow(2, -10 * t/d) + 1) + b; }\n";
@@ -207,8 +240,8 @@ function addTween( layer, tween )
         p.expressionEnabled = true;
         
         var script = "var p = [transform.position[0], transform.position[1]];\n";
-        script += "if ( time < inPoint + 1 ) { p[0] = easeOutExpo( time-inPoint, p[0] - 1920, 1920, 1 ); }\n";
-        script += "else if ( time > outPoint - 1 ) { p[0] = easeInExpo( time-(outPoint-1), p[0], 1920, 1 ); }\n";
+        script += "if ( time < inPoint + "+velocity+" ) { p[0] = easeOutExpo( time-inPoint, p[0] - 1920, 1920, "+velocity+" ); }\n";
+        script += "else if ( time > outPoint - "+velocity+" ) { p[0] = easeInExpo( time-(outPoint-1), p[0], 1920, "+velocity+" ); }\n";
         script += "p;\n";
         script += "function easeInExpo(t, b, c, d) { return(t==0) ? b : c * Math.pow(2, 10 *(t/d - 1)) + b - c * 0.001; }\n";
         script += "function easeOutExpo(t, b, c, d) { return(t==d) ? b+c : c * 1.001 *(-Math.pow(2, -10 * t/d) + 1) + b; }\n";
@@ -221,8 +254,8 @@ function addTween( layer, tween )
         p.expressionEnabled = true;
         
         var script = "var p = [transform.position[0], transform.position[1], transform.position[2]];\n";
-        script += "if ( time < inPoint + 1 ) { p[2] = easeOutExpo( time-inPoint, p[2] - 2048, 2048, 1 ); }\n";
-        script += "else if ( time > outPoint - 1 ) { p[2] = easeInExpo( time-(outPoint-1), p[2], 16000, 1 ); }\n";
+        script += "if ( time < inPoint + "+velocity+" ) { p[2] = easeOutExpo( time-inPoint, p[2] - 2048, 2048, "+velocity+" ); }\n";
+        script += "else if ( time > outPoint - "+velocity+" ) { p[2] = easeInExpo( time-(outPoint-1), p[2], 16000, "+velocity+" ); }\n";
         script += "p;\n";
         script += "function easeInExpo(t, b, c, d) { return(t==0) ? b : c * Math.pow(2, 10 *(t/d - 1)) + b - c * 0.001; }\n";
         script += "function easeOutExpo(t, b, c, d) { return(t==d) ? b+c : c * 1.001 *(-Math.pow(2, -10 * t/d) + 1) + b; }\n";
@@ -235,8 +268,8 @@ function addTween( layer, tween )
         p.expressionEnabled = true;
         
         var script = "var p = [transform.position[0], transform.position[1], transform.position[2]];\n";
-        script += "if ( time < inPoint + 1 ) { p[2] = easeOutExpo( time-inPoint, p[2] + 16000, -16000, 1 ); }\n";
-        script += "else if ( time > outPoint - 1 ) { p[2] = easeInExpo( time-(outPoint-1), p[2], -2048, 1 ); }\n";
+        script += "if ( time < inPoint + "+velocity+" ) { p[2] = easeOutExpo( time-inPoint, p[2] + 16000, -16000, "+velocity+" ); }\n";
+        script += "else if ( time > outPoint - 1 ) { p[2] = easeInExpo( time-(outPoint-1), p[2], -2048, "+velocity+" ); }\n";
         script += "p;\n";
         script += "function easeInExpo(t, b, c, d) { return(t==0) ? b : c * Math.pow(2, 10 *(t/d - 1)) + b - c * 0.001; }\n";
         script += "function easeOutExpo(t, b, c, d) { return(t==d) ? b+c : c * 1.001 *(-Math.pow(2, -10 * t/d) + 1) + b; }\n";
@@ -245,4 +278,59 @@ function addTween( layer, tween )
     return 2;
 }
 
-startRemmaping();
+//startRemmaping();
+
+/*
+
+		WINDOWS
+
+*/
+
+function createDialog(titre, hasokbutton, okfonction) {
+	var f = new Window("palette", titre, undefined, {
+		closeButton: false,
+		resizeable: false
+	});
+	f.spacing = 2;
+	f.margins = 5;
+	f.alignChildren = ["fill", "top"];
+	f.groupe = f.add("group");
+	f.groupe.alignChildren = ["fill", "top"];
+	var fgroupeBoutons = addHGroup(f);
+	fgroupeBoutons.alignment = ["fill", "bottom"];
+	fgroupeBoutons.margins = 10;
+	if (hasokbutton) {
+		var fcancel = addButton(fgroupeBoutons, "Annuler");
+		fcancel.onClick = function () {
+			f.hide();
+		};
+		fcancel.alignment = ["left", "bottom"];
+		var fok = addButton(fgroupeBoutons, "OK");
+		fok.alignment = ["right", "bottom"];
+		if (okfonction != undefined) fok.onClick = function () {
+			f.hide();
+			okfonction();
+		}
+	} else {
+		var fcancel = addButton(fgroupeBoutons, "Fermer");
+		fcancel.onClick = function () {
+			f.hide();
+		};
+	}
+
+	return f;
+}
+
+function addHGroup(conteneur) {
+	var groupe = conteneur.add("group");
+	groupe.alignChildren = ["fill", "fill"];
+	groupe.orientation = "row";
+	groupe.spacing = 2;
+	groupe.margins = 0;
+	return groupe;
+}
+
+function addButton(conteneur, texte) {
+	var bouton = conteneur.add("button", undefined, texte);
+	return bouton;
+}
