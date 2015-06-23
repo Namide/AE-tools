@@ -26,22 +26,24 @@ groupe1.alignChildren = ["fill", "center"];
 var g2 = groupe1.add('group');
 g2.orientation = "row";
 g2.add("statictext", undefined, "number");
-var markerNumber = g2.add("edittext", undefined, mkNumber);
+var markerNumber = g2.add("edittext", [0,0,50,20], mkNumber);
+g2.add("statictext", undefined, "delay");
+var markerDelay = g2.add("edittext", [0,0,50,20], mkNumber);
 
 var g3 = groupe1.add('group');
 g3.orientation = "row";
 g3.add("statictext", undefined, "value");
-var markerDefaultValue = g3.add("edittext", undefined, mkValue);
+var markerDefaultValue = g3.add("edittext", [0,0,50,20], mkValue);
 
 var g4 = groupe1.add('group');
 g4.orientation = "row";
 g4.add("statictext", undefined, "time");
-var markerDefaultTime = g4.add("edittext", undefined, mkTime);
+var markerDefaultTime = g4.add("edittext", [0,0,50,20], mkTime);
 
 var g5 = groupe1.add('group');
 g5.orientation = "row";
 g5.add("statictext", undefined, "tween");
-var markerDefaultTween = g5.add("edittext", undefined, mkTween);
+var markerDefaultTween = g5.add("edittext", [0,0,100,20], mkTween);
 
 
 
@@ -100,7 +102,11 @@ function createMarker() {
 		parms.tfs1Tween = markerDefaultTween.text;
 		mv.setParameters(parms);
 
-		app.project.activeItem.selectedLayers[0].property("Marker").setValueAtTime((app.project.activeItem.time + i + 1), mv);
+		var t = app.project.activeItem.time + i * Number(markerDelay.text);
+		
+		alert( app.project.activeItem.time + " " + markerDelay.text );
+		
+		app.project.activeItem.selectedLayers[0].property("Marker").setValueAtTime( t, mv );
 	}
 
 }
