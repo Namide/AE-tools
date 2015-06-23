@@ -103,9 +103,6 @@ function createMarker() {
 		mv.setParameters(parms);
 
 		var t = app.project.activeItem.time + i * Number(markerDelay.text);
-		
-		alert( app.project.activeItem.time + " " + markerDelay.text );
-		
 		app.project.activeItem.selectedLayers[0].property("Marker").setValueAtTime( t, mv );
 	}
 
