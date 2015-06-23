@@ -10,17 +10,24 @@ groupe1.alignChildren = ["fill", "center"];
 var g2 = groupe1.add('group');
 g2.orientation = "row";
 g2.add("statictext", undefined, "scope");
-var markerMin = g2.add("edittext", [0,0,60,20], 30);
+
+var markerMinS = g2.add("edittext", [0,0,50,20], 30);
+g2.add("statictext", undefined, ":");
+var markerMinF = g2.add("edittext", [0,0,40,20], 0);
+
 g2.add("statictext", undefined, "<");
-var markerMax = g2.add("edittext", [0,0,60,20], 60);
+
+var markerMaxS = g2.add("edittext", [0,0,50,20], 60);
+g2.add("statictext", undefined, ":");
+var markerMaxF = g2.add("edittext", [0,0,40,20], 0);
+
 
 var g3 = groupe1.add('group');
 g3.orientation = "row";
 g3.add("statictext", undefined, "delay");
 var markerDelayS = g3.add("edittext", [0,0,50,20], 10);
-g3.add("statictext", undefined, "s");
+g3.add("statictext", undefined, ":");
 var markerDelayF = g3.add("edittext", [0,0,40,20], 0);
-g3.add("statictext", undefined, "f");
 
 
 /*
@@ -45,8 +52,11 @@ function start() {
 	}
 	else
 	{
-		markerMin.text = app.project.activeItem.time;
-		markerMax.text = app.project.activeItem.time + 10;
+		markerMinS.text = Math.floor(app.project.activeItem.time);
+		markerMinF.text = Math.round( (app.project.activeItem.time - Math.floor(app.project.activeItem.time)) * app.project.activeItem.frameRate );
+		markerMaxS.text = Number( markerMinS.text ) + 1;
+		markerMaxF.text = markerMinF.text;
+		
 		windowsOptions.show();
 	}
 	
@@ -64,8 +74,8 @@ function process()
 	var layer = app.project.activeItem.selectedLayers[0];
 	
 	
-	var min = Number(markerMin.text);
-	var max = Number(markerMax.text);
+	var min = Number(markerMinS.text) + Number(markerMinF.text) / app.project.activeItem.frameRate;
+	var max = Number(markerMaxS.text) + Number(markerMaxF.text) / app.project.activeItem.frameRate;
 	var delay = Number(markerDelayS.text) + Number(markerDelayF.text) / app.project.activeItem.frameRate;
 	
 	
