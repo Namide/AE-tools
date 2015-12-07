@@ -1,6 +1,7 @@
-﻿/*
+/*
 	SRT subtitle import for AE CS5
 	By August Bering
+	Modified by Namide (Damien Doussaud)
 	
 	Usage: 
 	Create a text layer in AE and select that layer. 
@@ -10,15 +11,29 @@
 
 function makeSubs()
 {
-	function getframe(timeInString)
+	function getframe(timeInString, subNum)
 	{
-		var t = timeInString.split(":");
-		var timeS = parseInt(t) * 3600 + parseInt( t[1] ) * 60 + parseFloat( t[2].replace(",", ".") );
-		var frame = timeS * 25;
+		try {
+			var t = timeInString.split(":");
+			var timeS = parseInt(t) * 3600 + parseInt( t[1] ) * 60 + parseFloat( t[2].replace(",", ".") );
+			var frame = timeS * 25;
+		}
+		catch(e)
+		{
+			alert("Error in the time parsing of the SRT : " + timeInString + " (" + subNum + "subtitle ) (⁎˃ᆺ˂)");
+		}
+		
 		return timeS;
 	}
 	
 	var pb = progressBar("Creating keyframes", );
+						 
+	if ( app.project.activeItem.selectedLayers.length < 1 )
+	{
+		alert("You must to select a text layer (=^‥^=)");
+		return;
+	}
+						 
 	var layer = app.project.activeItem.selectedLayers[0];
 	
 	if (layer.property("sourceText") != null)
@@ -30,20 +45,20 @@ function makeSubs()
 			textFile.open("r", "TEXT", "????");
 			
 			var sourceText = layer.property("sourceText");
-			var subnr=0;
-			var nrSubs=0;
+			var subnr = 0;
+			var nrSubs = 0;
 			while (!textFile.eof)
 			{
-				if (""==textFile.readln())
+				if ("" == textFile.readln())
 				nrSubs++;
 			}
 			textFile.seek(0);
 			
 			//begin with empty text
-			sourceText.setValueAtTime(0,"");
+			sourceText.setValueAtTime(0, "");
 			while (!textFile.eof)
 			{
-				pb.setValue(subnr/nrSubs);
+				pb.setValue(subnr / nrSubs);
 				
 				pb.p.update();
 				if (pb.isCanceled ())
@@ -56,17 +71,16 @@ function makeSubs()
 				subnr++;
 				var line = textFile.readln();
 				line = textFile.readln();
-				var times=line.split('-->');
-				var starttime=getframe(times[0]);
-				var stoptime=getframe(times[1]);
+				var times = line.split('-->');
+				var starttime = getframe(times[0], subnr);
+				var stoptime = getframe(times[1], subnr);
 				
-				var text=""
-				while ((line= textFile.readln())!="")
-				{
-					text+=line+"\r\n";
+				var text = "";
+				while ((line = textFile.readln()) != "") {
+					text += line+"\r\n";
 				}
-				sourceText.setValueAtTime(starttime,text);
-				sourceText.setValueAtTime(stoptime,"");
+				sourceText.setValueAtTime(starttime, text);
+				sourceText.setValueAtTime(stoptime, "");
 			}
 			
 			textFile.close();
@@ -74,21 +88,6 @@ function makeSubs()
 		}
 	}
 }
-
-
-/*
-	Easy to use progress bar for ExtendScript.
-	Written by poly@omino.com, 2007
-	Enjoy, but this credit must remain intact.
-	
-	>usage:
-	
-	> var pb = progressBar("main title","subtitle");
-	pb.setValue(valueFrom0to1);
-	pb.setTitle2("new subtitle display!")
-	if(pb.isCanceled())
-	pb.close();
-*/
 
 function progressBar(title1)
 {
