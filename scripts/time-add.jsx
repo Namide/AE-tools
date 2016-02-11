@@ -19,6 +19,7 @@
 
  */
 
+
 var dt = 1.0;
 
 var windowsOptions = createDialog("Time add", true, process);
@@ -134,8 +135,11 @@ function remapProp(layer, prop, dt)
 	}
 }
 
-function remapCompo(compo, dt)
+function remapCompo(compo, dt, recurs)
 {
+	if (recurs == undefined)
+		recurs = true;
+	
 	// COMPO
 	compo.duration += dt;
 	if (compo.time < compo.workAreaStart)
@@ -148,55 +152,51 @@ function remapCompo(compo, dt)
 	
 	
 	// LAYERS
-	var lc = compo.layers;
-	var list = [];
-	for (var j = 1; j <= lc.length; j++)
+	if (recurs)
 	{
-		list.push(lc[j]);
+		var lc = compo.layers;
+		for (var j = 1; j <= lc.length; j++)
+		{
+			remapLayer(lc[j], dt);
+		}
 	}
-	remapLayers(list, dt);
 }
 
-function remapLayers(list, dt)
+function remapLayer(layer, dt)
 {
-    var d = 0;
-	for (var i = 0; i < list.length; i++ )
-    {
-		var layer = list[i];
-		
-      	// the layer is before
-		if (layer.outPoint < layer.time)
-		{
-			// do nothin
-		}
-		// the layer is after
-		else if (layer.inPoint > layer.time)
-		{
-			layer.startTime += dt;
-			//layer.outPoint += dt;
-		}
-		// the cursor is over the layer
-		else
-		{
-			
-			// the layer is a composition
-			if (layer.source != null &&
-				layer.source.layers != null)
-			{
-				remapCompo(layer.source, dt);
-			}
-			
-			var datas = [];
+    // the layer is before
+	if (layer.outPoint < layer.time)
+	{
+		// do nothin
+	}
+	// the layer is after
+	else if (layer.inPoint > layer.time)
+	{
+		layer.startTime += dt;
+		//layer.outPoint += dt;
+	}
+	// the cursor is over the layer
+	else
+	{
 
-			// Remap properties of layer
-			for (var j = 1; j <= layer.numProperties; j++)
-			{
-				remapProp(layer, layer.property(j), dt);
-			}
-			
-			layer.outPoint += dt;
+		// the layer is a composition
+		if (layer.source != null &&
+			layer.source.layers != null)
+		{
+			remapCompo(layer.source, dt);
 		}
-    }
+
+		var datas = [];
+
+		// Remap properties of layer
+		for (var j = 1; j <= layer.numProperties; j++)
+		{
+			remapProp(layer, layer.property(j), dt);
+		}
+
+		layer.outPoint += dt;
+	}
+    
 }
 
 function process()
@@ -206,9 +206,12 @@ function process()
 		
 		app.beginUndoGroup("Time add");
 			dt = Number(eval(dtNumber.text));
-			//dt = Number(dtNumber.text);
 			var layers = app.project.activeItem.selectedLayers;
-			remapCompo(layers[0].containingComp, dt);
+			remapCompo(layers[0].containingComp, dt, false);
+			for (var i = 0; i < layers.length; i++)
+			{
+				remapLayer(layers[i], dt);
+			}
 		app.endUndoGroup();
 		
 	}
