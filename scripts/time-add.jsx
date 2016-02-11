@@ -21,16 +21,16 @@
 
 var dt = 1.0;
 
-var windowsOptions = createDialog("Time remapper", true, process);
+var windowsOptions = createDialog("Time add", true, process);
 windowsOptions.groupe.orientation = "column";
 
-var groupe1 = windowsOptions.groupe.add("panel", undefined, "Parameters");
+var groupe1 = windowsOptions.groupe.add("panel", undefined, "Time");
 groupe1.orientation = "column";
 groupe1.alignChildren = ["fill", "center"];
 
 var g2 = groupe1.add('group');
 g2.orientation = "row";
-g2.add("statictext", undefined, "time (sec)");
+g2.add("statictext", undefined, "Seconds");
 var dtNumber = g2.add("edittext", [0,0,40,20], dt);
 
 
@@ -134,6 +134,28 @@ function remapProp(layer, prop, dt)
 	}
 }
 
+function remapCompo(compo, dt)
+{
+	// COMPO
+	compo.duration += dt;
+	if (compo.time < compo.workAreaStart)
+		compo.workAreaStart += dt;
+	/*
+		Auto if duration change
+		else if (compo.time < compo.workAreaStart + compo.workAreaDuration)
+			compo.workAreaDuration += dt;
+	*/
+	
+	
+	// LAYERS
+	var lc = compo.layers;
+	var list = [];
+	for (var j = 1; j <= lc.length; j++)
+	{
+		list.push(lc[j]);
+	}
+	remapLayers(list, dt);
+}
 
 function remapLayers(list, dt)
 {
@@ -156,24 +178,17 @@ function remapLayers(list, dt)
 		// the cursor is over the layer
 		else
 		{
+			
 			// the layer is a composition
 			if (layer.source != null &&
 				layer.source.layers != null)
 			{
-				var lc = layer.source.layers;
-				var list2 = [];
-				for (var j = 1; j <= lc.length; j++)
-				{
-					list2.push(lc[j]);
-				}
-				remapLayers( list2, dt );
-				
-				layer.source.duration += dt;
+				remapCompo(layer.source, dt);
 			}
 			
 			var datas = [];
 
-			// Loop through child properties
+			// Remap properties of layer
 			for (var j = 1; j <= layer.numProperties; j++)
 			{
 				remapProp(layer, layer.property(j), dt);
@@ -190,11 +205,10 @@ function process()
 	{
 		
 		app.beginUndoGroup("Time add");
-			dt = Number(dtNumber.text);
+			dt = Number(eval(dtNumber.text));
+			//dt = Number(dtNumber.text);
 			var layers = app.project.activeItem.selectedLayers;
-			remapLayers(layers, dt);
-			app.project.activeItem.workAreaDuration += dt;
-			app.project.activeItem.duration += dt;
+			remapCompo(layers[0].containingComp, dt);
 		app.endUndoGroup();
 		
 	}
