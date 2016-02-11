@@ -144,11 +144,9 @@ function remapCompo(compo, dt, recurs)
 	compo.duration += dt;
 	if (compo.time < compo.workAreaStart)
 		compo.workAreaStart += dt;
-	/*
-		Auto if duration change
-		else if (compo.time < compo.workAreaStart + compo.workAreaDuration)
-			compo.workAreaDuration += dt;
-	*/
+	else if (compo.time < compo.workAreaStart + compo.workAreaDuration)
+		compo.workAreaDuration += dt;
+	
 	
 	
 	// LAYERS
