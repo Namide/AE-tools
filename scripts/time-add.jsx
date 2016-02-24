@@ -25,14 +25,20 @@ var dt = 1.0;
 var windowsOptions = createDialog("Time add", true, process);
 windowsOptions.groupe.orientation = "column";
 
-var groupe1 = windowsOptions.groupe.add("panel", undefined, "Time");
-groupe1.orientation = "column";
-groupe1.alignChildren = ["fill", "center"];
+var g1 = windowsOptions.groupe.add("panel", undefined, "Time");
+g1.orientation = "column";
+g1.alignChildren = ["fill", "center"];
 
-var g2 = groupe1.add('group');
+var g2 = g1.add('group');
 g2.orientation = "row";
 g2.add("statictext", undefined, "Seconds");
 var dtNumber = g2.add("edittext", [0,0,40,20], dt);
+
+var g3 = g1.add('group');
+g3.orientation = "row";
+g3.add('checkbox', undefined, 'Only selected layers');
+var onlySelectedLayers = g3.add("edittext", [0,0,40,20], dt);
+
 
 
 /*
@@ -166,6 +172,9 @@ function remapCompo(compo, dt, recurs)
 
 function remapLayer(layer, dt)
 {
+	var locked = layer.locked;
+	layer.locked = false;
+	
     // the layer is before
 	if (layer.outPoint < layer.time)
 	{
@@ -199,6 +208,7 @@ function remapLayer(layer, dt)
 		layer.outPoint += dt;
 	}
     
+	layer.locked = locked;
 }
 
 function process()
@@ -207,13 +217,29 @@ function process()
 	{
 		
 		app.beginUndoGroup("Time add");
+			
 			dt = Number(eval(dtNumber.text));
-			var layers = app.project.activeItem.selectedLayers;
-			remapCompo(layers[0].containingComp, dt, false);
-			for (var i = 0; i < layers.length; i++)
+			
+			// only selected layers
+			if (onlySelectedLayers)
 			{
-				remapLayer(layers[i], dt);
+				var layers = app.project.activeItem.selectedLayers;
+				remapCompo(layers[0].containingComp, dt, false);
+				for (var i = 0; i < layers.length; i++) {
+
+					remapLayer(layers[i], dt);
+				}
 			}
+			// all compo
+			else
+			{
+				remapCompo(layers[0].containingComp, dt, false);
+				for (var j = 1; j <= layers[0].containingComp.layers.length; j++) {
+
+					remapCompo(layers[0].containingComp.layers[j], dt);
+				}
+			}
+		
 		app.endUndoGroup();
 		
 	}
