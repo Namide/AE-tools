@@ -34,10 +34,10 @@ g2.orientation = "row";
 g2.add("statictext", undefined, "Seconds");
 var dtNumber = g2.add("edittext", [0,0,40,20], dt);
 
-var g3 = g1.add('group');
-g3.orientation = "row";
-g3.add('checkbox', undefined, 'Only selected layers');
-var onlySelectedLayers = g3.add("edittext", [0,0,40,20], dt);
+//var g3 = g1.add('group');
+//g3.orientation = "row";
+//g3.add('statictext', undefined, 'Only selected layers');
+var onlySelectedLayers = g1.add("checkbox", undefined, "Only selected layers");
 
 
 
@@ -219,13 +219,13 @@ function process()
 		app.beginUndoGroup("Time add");
 			
 			dt = Number(eval(dtNumber.text));
+			var layers = app.project.activeItem.selectedLayers;
+			remapCompo(layers[0].containingComp, dt, false);
 			
 			// only selected layers
-			if (onlySelectedLayers)
+			if (onlySelectedLayers.value)
 			{
-				var layers = app.project.activeItem.selectedLayers;
-				remapCompo(layers[0].containingComp, dt, false);
-				for (var i = 0; i < layers.length; i++) {
+				for (var i = 0, l = layers.length; i < l; i++) {
 
 					remapLayer(layers[i], dt);
 				}
@@ -233,10 +233,9 @@ function process()
 			// all compo
 			else
 			{
-				remapCompo(layers[0].containingComp, dt, false);
-				for (var j = 1; j <= layers[0].containingComp.layers.length; j++) {
+				for (var j = 1, l = layers[0].containingComp.layers.length; j <= l; j++) {
 
-					remapCompo(layers[0].containingComp.layers[j], dt);
+					remapLayer(layers[0].containingComp.layers[j], dt);
 				}
 			}
 		
