@@ -339,10 +339,7 @@ function easeOutInBounce(t, b, c, d) {
 */
 
 var newDatas = [];
-var depth =
-  thisProperty.value == Number(thisProperty.value)
-    ? 1
-    : thisProperty.value.length;
+var depth = Array.isArray(thisProperty.value) ? thisProperty.value.length : 1;
 var datas = depth < 2 ? new Array(thisProperty) : thisProperty.value;
 
 var i;
@@ -383,5 +380,5 @@ if (time < inPoint) {
   for (i = 0; i < depth; i++) newDatas[i] = datas[i];
 }
 
-if (depth < 2) newDatas[0];
-else newDatas;
+if (depth < 2) value = newDatas[0];
+else value = newDatas;
