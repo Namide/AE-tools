@@ -302,11 +302,12 @@
 
     group = panel.add("group");
     group.add("statictext", undefined, "Presets:");
-    _tweenInputs["preset"] = group.add(
-      "dropdownlist",
-      undefined,
-      getPresets().map(function (preset) { return preset.name })
-    );
+    var presets = getPresets();
+    var presetsNames = [];
+    for (var i = 0; i < presets.length; i++) {
+      presetsNames.push(presets[i].name);
+    }
+    _tweenInputs["preset"] = group.add("dropdownlist", undefined, presetsNames);
     _tweenInputs["preset"].selection = 0;
     _tweenInputs["preset"].onChange = tweenChangePreset;
 
@@ -577,7 +578,7 @@
   function tweenChangePreset() {
     var id = this.selection.index;
 
-    var presets = getPresets()
+    var presets = getPresets();
     var preset = presets[id];
 
     _tweenInputs["property"].selection = preset["property"];
@@ -600,72 +601,82 @@
     _tweenInputs["relative"].value = preset["relative"];
   }
 
-  function displayText (text, callback) {
-    var pal = new Window("dialog", "Settings", undefined, {resizeable: true});
-    
-    pal.margins = [10,10,10,10];    
-    
-    var input = pal.add("edittext", [0, 0, 500, 500], text, { multiline: true });
-    input.alignment = ['fill','fill'];
+  function displayText(text, callback) {
+    var pal = new Window("dialog", "Settings", undefined, { resizeable: true });
+
+    pal.margins = [10, 10, 10, 10];
+
+    var input = pal.add("edittext", [0, 0, 500, 500], text, {
+      multiline: true,
+    });
+    input.alignment = ["fill", "fill"];
 
     var group = pal.add("group");
     group.orientation = "row";
-    group.alignment = ['center','bottom'];
-    
-    var button = group.add("iconbutton", undefined, undefined, {style: "toolbutton"}); 
+    group.alignment = ["center", "bottom"];
+
+    var button = group.add("iconbutton", undefined, undefined, {
+      style: "toolbutton",
+    });
     button.text = "Save";
     button.onClick = function () {
       if (callback(input.text)) {
         pal.close();
       }
-    }
+    };
 
-    button = group.add("iconbutton", undefined, undefined, {style: "toolbutton"}); 
+    button = group.add("iconbutton", undefined, undefined, {
+      style: "toolbutton",
+    });
     button.text = "Reset";
     button.onClick = function () {
       const presets = _initialPresets;
       savePresets(presets);
       updatePresetDropdown(presets, 0);
       pal.close();
-    }
-    
+    };
+
     pal.layout.layout(true);
     pal.layout.resize();
-    pal.onResizing = pal.onResize = function () {this.layout.resize();}
+    pal.onResizing = pal.onResize = function () {
+      this.layout.resize();
+    };
     pal.center();
     pal.show();
   }
-  
 
   function savePreset() {
-    var name = prompt("Name of your preset", "Custom preset " + Math.floor(Math.random() * 1000));
+    var name = prompt(
+      "Name of your preset",
+      "Custom preset " + Math.floor(Math.random() * 1000)
+    );
 
     if (!name) {
-      return
+      return;
     }
 
     var preset = {
-      "name": String(name),
-      "property": _tweenInputs["property"].selection.index,
-      "inEasing": _tweenInputs["inEasing"].selection.index,
-      "inTime": Number(testNumber(_tweenInputs["inTime"].text)),
-      "inType": _tweenInputs["inType"].selection.index,
-      "inValues": [
+      name: String(name),
+      property: _tweenInputs["property"].selection.index,
+      inEasing: _tweenInputs["inEasing"].selection.index,
+      inTime: Number(testNumber(_tweenInputs["inTime"].text)),
+      inType: _tweenInputs["inType"].selection.index,
+      inValues: [
         Number(testNumber(_tweenInputs["inValues"][0].text)),
         Number(testNumber(_tweenInputs["inValues"][1].text)),
-        Number(testNumber(_tweenInputs["inValues"][2].text))
+        Number(testNumber(_tweenInputs["inValues"][2].text)),
       ],
-      "outEasing": _tweenInputs["outEasing"].selection.index,
-      "outTime": Number(testNumber(_tweenInputs["outTime"].text)),
-      "outType": _tweenInputs["outType"].selection.index,
-      "outValues": [
+      outEasing: _tweenInputs["outEasing"].selection.index,
+      outTime: Number(testNumber(_tweenInputs["outTime"].text)),
+      outType: _tweenInputs["outType"].selection.index,
+      outValues: [
         Number(testNumber(_tweenInputs["outValues"][0].text)),
         Number(testNumber(_tweenInputs["outValues"][1].text)),
-        Number(testNumber(_tweenInputs["outValues"][2].text))
+        Number(testNumber(_tweenInputs["outValues"][2].text)),
       ],
-      "pause": Boolean(_tweenInputs["pause"].value),
-      "relative": Boolean(_tweenInputs["relative"].value),
-    }
+      pause: Boolean(_tweenInputs["pause"].value),
+      relative: Boolean(_tweenInputs["relative"].value),
+    };
 
     var presets = getPresets();
     presets.push(preset);
@@ -684,14 +695,16 @@
           updatePresetDropdown(presets, 0);
           return true;
         } catch (error) {
-          alert("Greg & Namide say: Your settings are not in good JSON format! ʕ•́ᴥ•̀ʔっ♡ ");
+          alert(
+            "Greg & Namide say: Your settings are not in good JSON format! ʕ•́ᴥ•̀ʔっ♡ "
+          );
           return false;
         }
       }
     );
   }
 
-  function updatePresetDropdown (presets, selectedIndex) {
+  function updatePresetDropdown(presets, selectedIndex) {
     _tweenInputs["preset"].removeAll();
     for (var i = 0; i < presets.length; i++) {
       _tweenInputs["preset"].add("item", presets[i].name);
@@ -704,13 +717,15 @@
     var presets = getPresets();
     for (var i = 0; i < presets.length; i++) {
       var preset = presets[i];
-      if (String(_tweenInputs["preset"].selection.text) == String(preset.name)) {
+      if (
+        String(_tweenInputs["preset"].selection.text) == String(preset.name)
+      ) {
         index = i;
       }
     }
-    
+
     if (index < 0) {
-      return
+      return;
     }
     presets.splice(index, 1);
     updatePresetDropdown(presets, 0);
@@ -731,7 +746,7 @@
   function getPresets() {
     const TFS_SETTINGS_NAME = "Tool for Speed";
     const TFS_TWEENS_PRESETS_NAME = "Tweens - presets";
-    
+
     if (app.settings.haveSetting(TFS_SETTINGS_NAME, TFS_TWEENS_PRESETS_NAME)) {
       return JSON.parse(
         app.settings.getSetting(TFS_SETTINGS_NAME, TFS_TWEENS_PRESETS_NAME)
