@@ -290,7 +290,11 @@
     _tweenInputs["property"].selection = 0;
     _tweenInputs["property"].onChange = tweenChangeProperty;
 
-    panel = _tweenGroup.add("panel", undefined, "inPoint");
+		// Options
+		var options = _tweenGroup.add("tabbedpanel", undefined, "");
+    options.margins = 10;
+
+    panel = options.add("tab", undefined, "<< In");
 
     panel.alignChildren = "left";
 
@@ -321,7 +325,7 @@
     _tweenInputs["inTime"] = group.add("edittext", [0, 0, 40, 19], 1);
     group.add("statictext", undefined, "seconds");
 
-    panel = _tweenGroup.add("panel", undefined, "outPoint");
+    panel = options.add("tab", undefined, "Out >>");
     panel.alignChildren = "left";
 
     group = panel.add("group");
@@ -351,7 +355,7 @@
     _tweenInputs["outTime"] = group.add("edittext", [0, 0, 40, 19], 1);
     group.add("statictext", undefined, "seconds");
 
-    panel = _tweenGroup.add("panel", undefined, "Advanced");
+    panel = options.add("tab", undefined, "Advanced");
 
     group = panel.add("group");
 
