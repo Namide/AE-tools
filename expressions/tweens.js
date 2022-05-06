@@ -339,7 +339,7 @@ function easeOutInBounce(t, b, c, d) {
 */
 
 var newDatas = [];
-var depth = Array.isArray(thisProperty.value) ? thisProperty.value.length : 1;
+var depth = Number(thisProperty.value) != thisProperty.value ? thisProperty.value.length : 1;
 var datas = depth < 2 ? new Array(thisProperty) : thisProperty.value;
 
 var i;
