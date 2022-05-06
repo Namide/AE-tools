@@ -20,183 +20,220 @@
 		TWEENS PROPERTIES
 	*/
 
-  var _tweenGroup;
-  var _tweenPresetsArray = ["Default", "-", "Opacity", "Position3D - to back", "RotationX - flap", "Position2D - to right", "Position2D - to left", "Position2D - to bottom", "Position2D - to top", "Orientation - Site", "  Position - Site", "Fade Audio", "Scale - Jelly", "Scale - Cushion"];
-  var _tweenPropertiesArray = ["Selected layer", "-", "Position", "Scale", "Rotation", "Opacity", "-", "Orientation", "Rotation X", "Rotation Y", "Rotation Z"];
-  var _tweenEasingArray = [
-    "None", "Quad", "Cubic", "Quart", "Quint", "Sine", "Expo", "Circ", "-", "Bounce", "Elastic", "Cushion", "Back"];
-  var _tweenTypeArray = ["In", "Out", "InOut", "OutIn"];
+  var _initialPresets = [
+    {
+      name: "Default",
+      property: 0,
+      inEasing: 6,
+      inTime: 1,
+      inType: 1,
+      inValues: [0, 0, 0],
+      outEasing: 6,
+      outTime: 1,
+      outType: 0,
+      outValues: [0, 0, 0],
+      pause: true,
+      relative: false,
+    },
+    {
+      name: "Opacity",
+      property: 5,
+      inEasing: 0,
+      inTime: 1,
+      inType: 2,
+      inValues: [0, 0, 0],
+      outEasing: 0,
+      outTime: 1,
+      outType: 2,
+      outValues: [0, 0, 0],
+      pause: true,
+      relative: false,
+    },
+    {
+      name: "Position3D - to back",
+      property: 2,
+      inEasing: 6,
+      inTime: 1,
+      inType: 1,
+      inValues: [0, 0, -500],
+      outEasing: 6,
+      outTime: 1,
+      outType: 0,
+      outValues: [0, 0, 500],
+      pause: true,
+      relative: true,
+    },
+    {
+      name: "RotationX - flap",
+      property: 8,
+      inEasing: 10,
+      inTime: 1.7,
+      inType: 1,
+      inValues: [90, 0, 0],
+      outEasing: 0,
+      outTime: 0,
+      outType: 0,
+      outValues: [0, 0, 0],
+      pause: true,
+      relative: false,
+    },
+    {
+      name: "Position2D - to right",
+      property: 2,
+      inEasing: 6,
+      inTime: 1,
+      inType: 1,
+      inValues: [-1920, 0, 0],
+      outEasing: 6,
+      outTime: 1,
+      outType: 0,
+      outValues: [1920, 0, 0],
+      pause: true,
+      relative: true,
+    },
+    {
+      name: "Position2D - to left",
+      property: 2,
+      inEasing: 6,
+      inTime: 1,
+      inType: 1,
+      inValues: [1920, 0, 0],
+      outEasing: 6,
+      outTime: 1,
+      outType: 0,
+      outValues: [-1920, 0, 0],
+      pause: true,
+      relative: true,
+    },
+    {
+      name: "Position2D - to bottom",
+      property: 2,
+      inEasing: 6,
+      inTime: 1,
+      inType: 1,
+      inValues: [0, -1080, 0],
+      outEasing: 6,
+      outTime: 1,
+      outType: 0,
+      outValues: [0, 1080, 0],
+      pause: true,
+      relative: true,
+    },
+    {
+      name: "Position2D - to top",
+      property: 2,
+      inEasing: 6,
+      inTime: 1,
+      inType: 1,
+      inValues: [0, 1080, 0],
+      outEasing: 6,
+      outTime: 1,
+      outType: 0,
+      outValues: [0, -1080, 0],
+      pause: true,
+      relative: true,
+    },
+    {
+      name: "Orientation - Site",
+      property: 7,
+      inEasing: 6,
+      inTime: 1,
+      inType: 1,
+      inValues: [90, -85, 10],
+      outEasing: 6,
+      outTime: 0,
+      outType: 0,
+      outValues: [0, 0, 0],
+      pause: true,
+      relative: false,
+    },
+    {
+      name: "Position - Site",
+      property: 2,
+      inEasing: 6,
+      inTime: 1,
+      inType: 1,
+      inValues: [0, 0, -2000],
+      outEasing: 6,
+      outTime: 0.7,
+      outType: 0,
+      outValues: [0, 1500, 0],
+      pause: true,
+      relative: true,
+    },
+    {
+      name: "Fade Audio",
+      property: 0,
+      inEasing: 6,
+      inTime: 3,
+      inType: 1,
+      inValues: [-99, -99, 0],
+      outEasing: 6,
+      outTime: 3,
+      outType: 0,
+      outValues: [-99, -99, 0],
+      pause: true,
+      relative: false,
+    },
+    {
+      name: "Scale - Jelly",
+      property: 3,
+      inEasing: 10,
+      inTime: 1,
+      inType: 1,
+      inValues: [85, 0, 0],
+      outEasing: 6,
+      outTime: 0.5,
+      outType: 0,
+      outValues: [0, 0, 0],
+      pause: true,
+      relative: false,
+    },
+    {
+      name: "Scale - Cushion",
+      property: 3,
+      inEasing: 11,
+      inTime: 1,
+      inType: 1,
+      inValues: [0, 0, 0],
+      outEasing: 6,
+      outTime: 1,
+      outType: 0,
+      outValues: [0, 0, 0],
+      pause: true,
+      relative: false,
+    },
+  ];
 
-  var _tweenPresetsDatas = [];
-  _tweenPresetsDatas[0] = {
-    property: 0,
-    inEasing: 6,
-    inTime: 1,
-    inType: 1,
-    inValues: [0, 0, 0],
-    outEasing: 6,
-    outTime: 1,
-    outType: 0,
-    outValues: [0, 0, 0],
-    pause: true,
-    relative: false,
-  };
-  _tweenPresetsDatas[2] = {
-    property: 5,
-    inEasing: 0,
-    inTime: 1,
-    inType: 2,
-    inValues: [0, 0, 0],
-    outEasing: 0,
-    outTime: 1,
-    outType: 2,
-    outValues: [0, 0, 0],
-    pause: true,
-    relative: false,
-  };
-  _tweenPresetsDatas[3] = {
-    property: 2,
-    inEasing: 6,
-    inTime: 1,
-    inType: 1,
-    inValues: [0, 0, -500],
-    outEasing: 6,
-    outTime: 1,
-    outType: 0,
-    outValues: [0, 0, 500],
-    pause: true,
-    relative: true,
-  };
-  _tweenPresetsDatas[4] = {
-    property: 8,
-    inEasing: 10,
-    inTime: 1.7,
-    inType: 1,
-    inValues: [90, 0, 0],
-    outEasing: 0,
-    outTime: 0,
-    outType: 0,
-    outValues: [0, 0, 0],
-    pause: true,
-    relative: false,
-  };
-  _tweenPresetsDatas[5] = {
-    property: 2,
-    inEasing: 6,
-    inTime: 1,
-    inType: 1,
-    inValues: [-1920, 0, 0],
-    outEasing: 6,
-    outTime: 1,
-    outType: 0,
-    outValues: [1920, 0, 0],
-    pause: true,
-    relative: true,
-  };
-  _tweenPresetsDatas[6] = {
-    property: 2,
-    inEasing: 6,
-    inTime: 1,
-    inType: 1,
-    inValues: [1920, 0, 0],
-    outEasing: 6,
-    outTime: 1,
-    outType: 0,
-    outValues: [-1920, 0, 0],
-    pause: true,
-    relative: true,
-  };
-  _tweenPresetsDatas[7] = {
-    property: 2,
-    inEasing: 6,
-    inTime: 1,
-    inType: 1,
-    inValues: [0, -1080, 0],
-    outEasing: 6,
-    outTime: 1,
-    outType: 0,
-    outValues: [0, 1080, 0],
-    pause: true,
-    relative: true,
-  };
-  _tweenPresetsDatas[8] = {
-    property: 2,
-    inEasing: 6,
-    inTime: 1,
-    inType: 1,
-    inValues: [0, 1080, 0],
-    outEasing: 6,
-    outTime: 1,
-    outType: 0,
-    outValues: [0, -1080, 0],
-    pause: true,
-    relative: true,
-  };
-  _tweenPresetsDatas[9] = {
-    property: 7,
-    inEasing: 6,
-    inTime: 1,
-    inType: 1,
-    inValues: [90, -85, 10],
-    outEasing: 6,
-    outTime: 0,
-    outType: 0,
-    outValues: [0, 0, 0],
-    pause: true,
-    relative: false,
-  };
-  _tweenPresetsDatas[10] = {
-    property: 2,
-    inEasing: 6,
-    inTime: 1,
-    inType: 1,
-    inValues: [0, 0, -2000],
-    outEasing: 6,
-    outTime: 0.7,
-    outType: 0,
-    outValues: [0, 1500, 0],
-    pause: true,
-    relative: true,
-  };
-  _tweenPresetsDatas[11] = {
-    property: 0,
-    inEasing: 6,
-    inTime: 3,
-    inType: 1,
-    inValues: [-99, -99, 0],
-    outEasing: 6,
-    outTime: 3,
-    outType: 0,
-    outValues: [-99, -99, 0],
-    pause: true,
-    relative: false,
-  };
-  _tweenPresetsDatas[12] = {
-    property: 3,
-    inEasing: 10,
-    inTime: 1,
-    inType: 1,
-    inValues: [85, 0, 0],
-    outEasing: 6,
-    outTime: 0.5,
-    outType: 0,
-    outValues: [0, 0, 0],
-    pause: true,
-    relative: false,
-  };
-  _tweenPresetsDatas[13] = {
-    property: 3,
-    inEasing: 11,
-    inTime: 1,
-    inType: 1,
-    inValues: [0, 0, 0],
-    outEasing: 6,
-    outTime: 1,
-    outType: 0,
-    outValues: [0, 0, 0],
-    pause: true,
-    relative: false,
-  };
+  var _tweenPropertiesArray = [
+    "Selected layer",
+    "-",
+    "Position",
+    "Scale",
+    "Rotation",
+    "Opacity",
+    "-",
+    "Orientation",
+    "Rotation X",
+    "Rotation Y",
+    "Rotation Z",
+  ];
+  var _tweenEasingArray = [
+    "None",
+    "Quad",
+    "Cubic",
+    "Quart",
+    "Quint",
+    "Sine",
+    "Expo",
+    "Circ",
+    "-",
+    "Bounce",
+    "Elastic",
+    "Cushion",
+    "Back",
+  ];
+  var _tweenTypeArray = ["In", "Out", "InOut", "OutIn"];
 
   /*
 		GENERAL DATAS
@@ -223,25 +260,18 @@
     _mainWindow.alignChildren = "center";
 
     try {
-      var tfs = new File($.fileName);
-      var dirTfs = tfs.parent.absoluteURI + "/";
-      _mainWindow.add(
-        "image",
-        undefined,
-        dirTfs + "/toolForSpeed/toolForSpeed_logo.png"
-      );
+      var file = getAbsolutePath("toolForSpeed_logo.png");
+      _mainWindow.add("image", undefined, file);
     } catch (e) {
       _mainWindow.add("statictext", [0, 50, 100, 70], "TOOL FOR SPEED");
     }
 
     var tabPanel = _mainWindow.add("tabbedpanel", undefined, "");
     tabPanel.margins = 6;
-    _tweenGroup = tabPanel.add("tab", undefined, "Tweens");
-    tab = tabPanel.add("tab", undefined, "Properties").enabled = false;
-    tab = tabPanel.add("tab", undefined, "Layer").enabled = false;
-    tab = tabPanel.add("tab", undefined, "Project").enabled = false;
+    var tweenGroup = tabPanel.add("tab", undefined, "Tweens");
+    // tab = tabPanel.add("tab", undefined, "Properties").enabled = false;
 
-    tweenInit();
+    tweenInit(tweenGroup);
 
     _mainWindow.layout.layout(true);
     _mainWindow.layout.resize();
@@ -260,12 +290,12 @@
 		TWEENS METHODS
 	*/
 
-  function tweenInit() {
+  function tweenInit(tweenGroup) {
     var group, list, panel, button; //, text;
 
-    _tweenGroup.orientation = "column";
+    tweenGroup.orientation = "column";
 
-    panel = _tweenGroup.add("group");
+    panel = tweenGroup.add("group");
     panel.margins = [0, 10, 0, 10];
     panel.alignChildren = "left";
     panel.orientation = "column";
@@ -275,10 +305,23 @@
     _tweenInputs["preset"] = group.add(
       "dropdownlist",
       undefined,
-      _tweenPresetsArray
+      getPresets().map(function (preset) { return preset.name })
     );
     _tweenInputs["preset"].selection = 0;
     _tweenInputs["preset"].onChange = tweenChangePreset;
+
+    group.add("iconbutton", undefined, getAbsolutePath("save.png"), {
+      name: "iconbutton1",
+      style: "toolbutton",
+    }).onClick = savePreset;
+    group.add("iconbutton", undefined, getAbsolutePath("delete.png"), {
+      name: "iconbutton1",
+      style: "toolbutton",
+    }).onClick = deletePreset;
+    group.add("iconbutton", undefined, getAbsolutePath("edit.png"), {
+      name: "iconbutton1",
+      style: "toolbutton",
+    }).onClick = editPresets;
 
     group = panel.add("group");
     group.add("statictext", undefined, "Properties:");
@@ -290,8 +333,8 @@
     _tweenInputs["property"].selection = 0;
     _tweenInputs["property"].onChange = tweenChangeProperty;
 
-		// Options
-		var options = _tweenGroup.add("tabbedpanel", undefined, "");
+    // Options
+    var options = tweenGroup.add("tabbedpanel", undefined, "");
     options.padding = 10;
     // options.margins = 10;
 
@@ -368,13 +411,15 @@
     _tweenInputs["pause"] = group.add("checkbox", undefined, "Pause enable");
     _tweenInputs["pause"].value = true;
 
-    var tfs = new File($.fileName);
-    var dirTfs = tfs.parent.absoluteURI + "/";
-    (group = _tweenGroup.add("group")),
+    (group = tweenGroup.add("group")),
       (button = group.add(
         "iconbutton",
         undefined,
-        dirTfs + "/toolForSpeed/apply.png"
+        getAbsolutePath("apply.png"),
+        {
+          name: "iconbutton1",
+          style: "toolbutton",
+        }
       ));
     button.onClick = tweenGenerate;
   }
@@ -532,31 +577,181 @@
   function tweenChangePreset() {
     var id = this.selection.index;
 
-    var presets = _tweenPresetsDatas[id];
+    var presets = getPresets()
+    var preset = presets[id];
 
-    _tweenInputs["property"].selection = presets["property"];
+    _tweenInputs["property"].selection = preset["property"];
 
-    _tweenInputs["inEasing"].selection = presets["inEasing"];
-    _tweenInputs["inTime"].text = presets["inTime"];
-    _tweenInputs["inType"].text = presets["inType"];
-    _tweenInputs["inValues"][0].text = presets["inValues"][0];
-    _tweenInputs["inValues"][1].text = presets["inValues"][1];
-    _tweenInputs["inValues"][2].text = presets["inValues"][2];
+    _tweenInputs["inEasing"].selection = preset["inEasing"];
+    _tweenInputs["inTime"].text = preset["inTime"];
+    _tweenInputs["inType"].text = preset["inType"];
+    _tweenInputs["inValues"][0].text = preset["inValues"][0];
+    _tweenInputs["inValues"][1].text = preset["inValues"][1];
+    _tweenInputs["inValues"][2].text = preset["inValues"][2];
 
-    _tweenInputs["outEasing"].selection = presets["outEasing"];
-    _tweenInputs["outTime"].text = presets["outTime"];
-    _tweenInputs["outType"].selection = presets["outType"];
-    _tweenInputs["outValues"][0].text = presets["outValues"][0];
-    _tweenInputs["outValues"][1].text = presets["outValues"][1];
-    _tweenInputs["outValues"][2].text = presets["outValues"][2];
+    _tweenInputs["outEasing"].selection = preset["outEasing"];
+    _tweenInputs["outTime"].text = preset["outTime"];
+    _tweenInputs["outType"].selection = preset["outType"];
+    _tweenInputs["outValues"][0].text = preset["outValues"][0];
+    _tweenInputs["outValues"][1].text = preset["outValues"][1];
+    _tweenInputs["outValues"][2].text = preset["outValues"][2];
 
-    _tweenInputs["pause"].value = presets["pause"];
-    _tweenInputs["relative"].value = presets["relative"];
+    _tweenInputs["pause"].value = preset["pause"];
+    _tweenInputs["relative"].value = preset["relative"];
+  }
+
+  function displayText (text, callback) {
+    var pal = new Window("dialog", "Settings", undefined, {resizeable: true});
+    
+    pal.margins = [10,10,10,10];    
+    
+    var input = pal.add("edittext", [0, 0, 500, 500], text, { multiline: true });
+    input.alignment = ['fill','fill'];
+
+    var group = pal.add("group");
+    group.orientation = "row";
+    group.alignment = ['center','bottom'];
+    
+    var button = group.add("iconbutton", undefined, undefined, {style: "toolbutton"}); 
+    button.text = "Save";
+    button.onClick = function () {
+      if (callback(input.text)) {
+        pal.close();
+      }
+    }
+
+    button = group.add("iconbutton", undefined, undefined, {style: "toolbutton"}); 
+    button.text = "Reset";
+    button.onClick = function () {
+      const presets = _initialPresets;
+      savePresets(presets);
+      updatePresetDropdown(presets, 0);
+      pal.close();
+    }
+    
+    pal.layout.layout(true);
+    pal.layout.resize();
+    pal.onResizing = pal.onResize = function () {this.layout.resize();}
+    pal.center();
+    pal.show();
+  }
+  
+
+  function savePreset() {
+    var name = prompt("Name of your preset", "Custom preset " + Math.floor(Math.random() * 1000));
+
+    if (!name) {
+      return
+    }
+
+    var preset = {
+      "name": String(name),
+      "property": _tweenInputs["property"].selection.index,
+      "inEasing": _tweenInputs["inEasing"].selection.index,
+      "inTime": Number(testNumber(_tweenInputs["inTime"].text)),
+      "inType": _tweenInputs["inType"].selection.index,
+      "inValues": [
+        Number(testNumber(_tweenInputs["inValues"][0].text)),
+        Number(testNumber(_tweenInputs["inValues"][1].text)),
+        Number(testNumber(_tweenInputs["inValues"][2].text))
+      ],
+      "outEasing": _tweenInputs["outEasing"].selection.index,
+      "outTime": Number(testNumber(_tweenInputs["outTime"].text)),
+      "outType": _tweenInputs["outType"].selection.index,
+      "outValues": [
+        Number(testNumber(_tweenInputs["outValues"][0].text)),
+        Number(testNumber(_tweenInputs["outValues"][1].text)),
+        Number(testNumber(_tweenInputs["outValues"][2].text))
+      ],
+      "pause": Boolean(_tweenInputs["pause"].value),
+      "relative": Boolean(_tweenInputs["relative"].value),
+    }
+
+    var presets = getPresets();
+    presets.push(preset);
+    updatePresetDropdown(presets, presets.length - 1);
+    savePresets(presets);
+  }
+
+  function editPresets() {
+    var presets = getPresets();
+    displayText(
+      JSON.stringify(presets, undefined, 2),
+      function (newPresetsString) {
+        try {
+          var presets = JSON.parse(newPresetsString);
+          savePresets(presets);
+          updatePresetDropdown(presets, 0);
+          return true;
+        } catch (error) {
+          alert("Greg & Namide say: Your settings are not in good JSON format! ʕ•́ᴥ•̀ʔっ♡ ");
+          return false;
+        }
+      }
+    );
+  }
+
+  function updatePresetDropdown (presets, selectedIndex) {
+    _tweenInputs["preset"].removeAll();
+    for (var i = 0; i < presets.length; i++) {
+      _tweenInputs["preset"].add("item", presets[i].name);
+    }
+    _tweenInputs["preset"].selection = selectedIndex;
+  }
+
+  function deletePreset() {
+    var index = -1;
+    var presets = getPresets();
+    for (var i = 0; i < presets.length; i++) {
+      var preset = presets[i];
+      if (String(_tweenInputs["preset"].selection.text) == String(preset.name)) {
+        index = i;
+      }
+    }
+    
+    if (index < 0) {
+      return
+    }
+    presets.splice(index, 1);
+    updatePresetDropdown(presets, 0);
+    savePresets(presets);
+  }
+
+  function savePresets(presets) {
+    const TFS_SETTINGS_NAME = "Tool for Speed";
+    const TFS_TWEENS_PRESETS_NAME = "Tweens - presets";
+
+    app.settings.saveSetting(
+      TFS_SETTINGS_NAME,
+      TFS_TWEENS_PRESETS_NAME,
+      JSON.stringify(presets)
+    );
+  }
+
+  function getPresets() {
+    const TFS_SETTINGS_NAME = "Tool for Speed";
+    const TFS_TWEENS_PRESETS_NAME = "Tweens - presets";
+    
+    if (app.settings.haveSetting(TFS_SETTINGS_NAME, TFS_TWEENS_PRESETS_NAME)) {
+      return JSON.parse(
+        app.settings.getSetting(TFS_SETTINGS_NAME, TFS_TWEENS_PRESETS_NAME)
+      );
+    }
+
+    const settings = _initialPresets;
+    savePresets(settings);
+    return settings;
   }
 
   /*
 		HELPERS
 	*/
+
+  function getAbsolutePath(file) {
+    var tfs = new File($.fileName);
+    var dirTfs = tfs.parent.absoluteURI + "/toolForSpeed/";
+    return dirTfs + file;
+  }
 
   function testNumber(text) {
     text = text.split(",").join(".");
@@ -568,9 +763,9 @@
   }
 
   function trace(s) {
-    //alert(s);
-    //$.writeln(s); // writes to the ExtendScript interface
-    writeLn(s); // writes in the AE info window
+    alert(s);
+    // $.writeln(s); // writes to the ExtendScript interface
+    //writeLn(s); // writes in the AE info window
   }
 
   init(this);
