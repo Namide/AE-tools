@@ -1,6 +1,6 @@
 ﻿{
   /*
-        ________           ______   __________                 ________                 _________
+    ________           ______   __________                 ________                 _________
         ___  __/______________  /   ___  ____/_____________    __  ___/_______________________  /
         __  /  _  __ \  __ \_  /    __  /_   _  __ \_  ___/    _____ \___  __ \  _ \  _ \  __  /
         _  /   / /_/ / /_/ /  /     _  __/   / /_/ /  /        ____/ /__  /_/ /  __/  __/ /_/ /
@@ -8,17 +8,20 @@
                                                                       /_/
         by Greg & Namide !
         version: 1.4.0
-    */
+  */
+
+  // JSON polyfill
+  "object"!=typeof JSON&&(JSON={}),function(){"use strict";var rx_one=/^[\],:{}\s]*$/,rx_two=/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,rx_three=/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,rx_four=/(?:^|:|,)(?:\s*\[)+/g,rx_escapable=/[\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,rx_dangerous=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta,rep;function f(t){return t<10?"0"+t:t}function this_value(){return this.valueOf()}function quote(t){return rx_escapable.lastIndex=0,rx_escapable.test(t)?'"'+t.replace(rx_escapable,function(t){var e=meta[t];return"string"==typeof e?e:"\\u"+("0000"+t.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+t+'"'}function str(t,e){var r,n,o,u,f,a=gap,i=e[t];switch(i&&"object"==typeof i&&"function"==typeof i.toJSON&&(i=i.toJSON(t)),"function"==typeof rep&&(i=rep.call(e,t,i)),typeof i){case"string":return quote(i);case"number":return isFinite(i)?String(i):"null";case"boolean":case"null":return String(i);case"object":if(!i)return"null";if(gap+=indent,f=[],"[object Array]"===Object.prototype.toString.apply(i)){for(u=i.length,r=0;r<u;r+=1)f[r]=str(r,i)||"null";return o=0===f.length?"[]":gap?"[\n"+gap+f.join(",\n"+gap)+"\n"+a+"]":"["+f.join(",")+"]",gap=a,o}if(rep&&"object"==typeof rep)for(u=rep.length,r=0;r<u;r+=1)"string"==typeof rep[r]&&(o=str(n=rep[r],i))&&f.push(quote(n)+(gap?": ":":")+o);else for(n in i)Object.prototype.hasOwnProperty.call(i,n)&&(o=str(n,i))&&f.push(quote(n)+(gap?": ":":")+o);return o=0===f.length?"{}":gap?"{\n"+gap+f.join(",\n"+gap)+"\n"+a+"}":"{"+f.join(",")+"}",gap=a,o}}"function"!=typeof Date.prototype.toJSON&&(Date.prototype.toJSON=function(){return isFinite(this.valueOf())?this.getUTCFullYear()+"-"+f(this.getUTCMonth()+1)+"-"+f(this.getUTCDate())+"T"+f(this.getUTCHours())+":"+f(this.getUTCMinutes())+":"+f(this.getUTCSeconds())+"Z":null},Boolean.prototype.toJSON=this_value,Number.prototype.toJSON=this_value,String.prototype.toJSON=this_value),"function"!=typeof JSON.stringify&&(meta={"\b":"\\b","\t":"\\t","\n":"\\n","\f":"\\f","\r":"\\r",'"':'\\"',"\\":"\\\\"},JSON.stringify=function(t,e,r){var n;if(gap="",indent="","number"==typeof r)for(n=0;n<r;n+=1)indent+=" ";else"string"==typeof r&&(indent=r);if(rep=e,e&&"function"!=typeof e&&("object"!=typeof e||"number"!=typeof e.length))throw new Error("JSON.stringify");return str("",{"":t})}),"function"!=typeof JSON.parse&&(JSON.parse=function(text,reviver){var j;function walk(t,e){var r,n,o=t[e];if(o&&"object"==typeof o)for(r in o)Object.prototype.hasOwnProperty.call(o,r)&&(void 0!==(n=walk(o,r))?o[r]=n:delete o[r]);return reviver.call(t,e,o)}if(text=String(text),rx_dangerous.lastIndex=0,rx_dangerous.test(text)&&(text=text.replace(rx_dangerous,function(t){return"\\u"+("0000"+t.charCodeAt(0).toString(16)).slice(-4)})),rx_one.test(text.replace(rx_two,"@").replace(rx_three,"]").replace(rx_four,"")))return j=eval("("+text+")"),"function"==typeof reviver?walk({"":j},""):j;throw new SyntaxError("JSON.parse")})}();
 
   /*
-		GENERAL PROPERTIES
-	*/
+    GENERAL PROPERTIES
+  */
 
   var _name = "TFS 1.4.0";
 
   /*
-		TWEENS PROPERTIES
-	*/
+    TWEENS PROPERTIES
+  */
 
   var _initialPresets = [
     {
@@ -236,20 +239,20 @@
   var _tweenTypeArray = ["In", "Out", "InOut", "OutIn"];
 
   /*
-		GENERAL DATAS
-	*/
+    GENERAL DATAS
+  */
 
   var _mainWindow;
 
   /*
-		TWEENS DATAS
-	*/
+    TWEENS DATAS
+  */
 
   var _tweenInputs = {};
 
   /*
-		GENERAL METHODS
-	*/
+    GENERAL METHODS
+  */
 
   function init(thisObj) {
     _mainWindow =
@@ -267,7 +270,7 @@
     }
 
     var tabPanel = _mainWindow.add("tabbedpanel", undefined, "");
-    tabPanel.margins = 6;
+    tabPanel.margins = 0;
     var tweenGroup = tabPanel.add("tab", undefined, "Tweens");
     // tab = tabPanel.add("tab", undefined, "Properties").enabled = false;
 
@@ -287,8 +290,8 @@
   }
 
   /*
-		TWEENS METHODS
-	*/
+    TWEENS METHODS
+  */
 
   function tweenInit(tweenGroup) {
     var group, list, panel, button; //, text;
@@ -296,12 +299,14 @@
     tweenGroup.orientation = "column";
 
     panel = tweenGroup.add("group");
-    panel.margins = [0, 10, 0, 10];
+    panel.margins = [0, 5, 0, 5];
     panel.alignChildren = "left";
     panel.orientation = "column";
 
     group = panel.add("group");
     group.add("statictext", undefined, "Presets:");
+    group.spacing = 0;
+
     var presets = getPresets();
     var presetsNames = [];
     for (var i = 0; i < presets.length; i++) {
@@ -311,18 +316,41 @@
     _tweenInputs["preset"].selection = 0;
     _tweenInputs["preset"].onChange = tweenChangePreset;
 
-    group.add("iconbutton", undefined, getAbsolutePath("save.png"), {
-      name: "iconbutton1",
-      style: "toolbutton",
-    }).onClick = savePreset;
-    group.add("iconbutton", undefined, getAbsolutePath("delete.png"), {
-      name: "iconbutton1",
-      style: "toolbutton",
-    }).onClick = deletePreset;
-    group.add("iconbutton", undefined, getAbsolutePath("edit.png"), {
-      name: "iconbutton1",
-      style: "toolbutton",
-    }).onClick = editPresets;
+    var btnSave = group.add(
+      "iconbutton",
+      undefined,
+      getAbsolutePath("save.png"),
+      {
+        name: "iconbutton1",
+        style: "toolbutton",
+      }
+    );
+    btnSave.onClick = savePreset;
+    btnSave.helpTip = "Save";
+
+    var btnDelete = group.add(
+      "iconbutton",
+      undefined,
+      getAbsolutePath("delete.png"),
+      {
+        name: "iconbutton1",
+        style: "toolbutton",
+      }
+    );
+    btnDelete.onClick = deletePreset;
+    btnDelete.helpTip = "Delete";
+
+    var btnEdit = group.add(
+      "iconbutton",
+      undefined,
+      getAbsolutePath("edit.png"),
+      {
+        name: "iconbutton1",
+        style: "toolbutton",
+      }
+    );
+    btnEdit.onClick = editPresets;
+    btnEdit.helpTip = "Edit";
 
     group = panel.add("group");
     group.add("statictext", undefined, "Properties:");
@@ -527,7 +555,7 @@
     script += "var relative = " + _tweenInputs["relative"].value + ";\n";
     script += "//	CALCULATION\n";
     script +=
-      "function easeNone(t,b,c,d){return c*t/d+b}function easeInQuad(t,b,c,d){return c*(t/=d)*t+b}function easeOutQuad(t,b,c,d){return-c*(t/=d)*(t-2)+b}function easeInOutQuad(t,b,c,d){return(t/=d/2)<1?c/2*t*t+b:-c/2*(--t*(t-2)-1)+b}function easeInCubic(t,b,c,d){return c*(t/=d)*t*t+b}function easeOutCubic(t,b,c,d){return c*((t=t/d-1)*t*t+1)+b}function easeInOutCubic(t,b,c,d){return(t/=d/2)<1?c/2*t*t*t+b:c/2*((t-=2)*t*t+2)+b}function easeOutInCubic(t,b,c,d){return t<d/2?easeOutCubic(2*t,b,c/2,d):easeInCubic(2*t-d,b+c/2,c/2,d)}function easeInQuart(t,b,c,d){return c*(t/=d)*t*t*t+b}function easeOutQuart(t,b,c,d){return-c*((t=t/d-1)*t*t*t-1)+b}function easeInOutQuart(t,b,c,d){return(t/=d/2)<1?c/2*t*t*t*t+b:-c/2*((t-=2)*t*t*t-2)+b}function easeOutInQuart(t,b,c,d){return t<d/2?easeOutQuart(2*t,b,c/2,d):easeInQuart(2*t-d,b+c/2,c/2,d)}function easeInQuint(t,b,c,d){return c*(t/=d)*t*t*t*t+b}function easeOutQuint(t,b,c,d){return c*((t=t/d-1)*t*t*t*t+1)+b}function easeInOutQuint(t,b,c,d){return(t/=d/2)<1?c/2*t*t*t*t*t+b:c/2*((t-=2)*t*t*t*t+2)+b}function easeOutInQuint(t,b,c,d){return t<d/2?easeOutQuint(2*t,b,c/2,d):easeInQuint(2*t-d,b+c/2,c/2,d)}function easeInSine(t,b,c,d){return-c*Math.cos(t/d*(Math.PI/2))+c+b}function easeOutSine(t,b,c,d){return c*Math.sin(t/d*(Math.PI/2))+b}function easeInOutSine(t,b,c,d){return-c/2*(Math.cos(Math.PI*t/d)-1)+b}function easeOutInSine(t,b,c,d){return t<d/2?easeOutSine(2*t,b,c/2,d):easeInSine(2*t-d,b+c/2,c/2,d)}function easeInExpo(t,b,c,d){return 0==t?b:c*Math.pow(2,10*(t/d-1))+b-.001*c}function easeOutExpo(t,b,c,d){return t==d?b+c:1.001*c*(1-Math.pow(2,-10*t/d))+b}function easeInOutExpo(t,b,c,d){return 0==t?b:t==d?b+c:(t/=d/2)<1?c/2*Math.pow(2,10*(t-1))+b-5e-4*c:c/2*1.0005*(2-Math.pow(2,-10*--t))+b}function easeOutInExpo(t,b,c,d){return t<d/2?easeOutExpo(2*t,b,c/2,d):easeInExpo(2*t-d,b+c/2,c/2,d)}function easeInCirc(t,b,c,d){return-c*(Math.sqrt(1-(t/=d)*t)-1)+b}function easeOutCirc(t,b,c,d){return c*Math.sqrt(1-(t=t/d-1)*t)+b}function easeInOutCirc(t,b,c,d){return(t/=d/2)<1?-c/2*(Math.sqrt(1-t*t)-1)+b:c/2*(Math.sqrt(1-(t-=2)*t)+1)+b}function easeOutInCirc(t,b,c,d){return t<d/2?easeOutCirc(2*t,b,c/2,d):easeInCirc(2*t-d,b+c/2,c/2,d)}function easeInElastic(t,b,c,d,a,p){var s;return 0==t?b:1==(t/=d)?b+c:(p||(p=.3*d),!a||a<Math.abs(c)?(a=c,s=p/4):s=p/(2*Math.PI)*Math.asin(c/a),-a*Math.pow(2,10*(t-=1))*Math.sin((t*d-s)*(2*Math.PI)/p)+b)}function easeOutElastic(t,b,c,d,a,p){var s;return 0==t?b:1==(t/=d)?b+c:(p||(p=.3*d),!a||a<Math.abs(c)?(a=c,s=p/4):s=p/(2*Math.PI)*Math.asin(c/a),a*Math.pow(2,-10*t)*Math.sin((t*d-s)*(2*Math.PI)/p)+c+b)}function easeInOutElastic(t,b,c,d,a,p){var s;return 0==t?b:2==(t/=d/2)?b+c:(p||(p=d*(.3*1.5)),!a||a<Math.abs(c)?(a=c,s=p/4):s=p/(2*Math.PI)*Math.asin(c/a),t<1?a*Math.pow(2,10*(t-=1))*Math.sin((t*d-s)*(2*Math.PI)/p)*-.5+b:a*Math.pow(2,-10*(t-=1))*Math.sin((t*d-s)*(2*Math.PI)/p)*.5+c+b)}function easeOutInElastic(t,b,c,d,a,p){return t<d/2?easeOutElastic(2*t,b,c/2,d,a,p):easeInElastic(2*t-d,b+c/2,c/2,d,a,p)}function easeInCushion(t,b,c,d,a,p){var s;return 0==t?b:1==(t/=d)?b+c:(p||(p=.7*d),!a||a<Math.abs(c)?(a=c,s=p/4):s=p/(2*Math.PI)*Math.asin(c/a),-a*Math.pow(2,10*(t-=1))*Math.sin((t*d-s)*(2*Math.PI)/p)+b)}function easeOutCushion(t,b,c,d,a,p){var s;return 0==t?b:1==(t/=d)?b+c:(p||(p=.7*d),!a||a<Math.abs(c)?(a=c,s=p/4):s=p/(2*Math.PI)*Math.asin(c/a),a*Math.pow(2,-10*t)*Math.sin((t*d-s)*(2*Math.PI)/p)+c+b)}function easeInOutCushion(t,b,c,d,a,p){var s;return 0==t?b:2==(t/=d/2)?b+c:(p||(p=d*(.7*1.5)),!a||a<Math.abs(c)?(a=c,s=p/4):s=p/(2*Math.PI)*Math.asin(c/a),t<1?a*Math.pow(2,10*(t-=1))*Math.sin((t*d-s)*(2*Math.PI)/p)*-.5+b:a*Math.pow(2,-10*(t-=1))*Math.sin((t*d-s)*(2*Math.PI)/p)*.5+c+b)}function easeInBack(t,b,c,d,s){return null==s&&(s=1.70158),c*(t/=d)*t*((s+1)*t-s)+b}function easeOutBack(t,b,c,d,s){return null==s&&(s=1.70158),c*((t=t/d-1)*t*((s+1)*t+s)+1)+b}function easeInOutBack(t,b,c,d,s){return null==s&&(s=1.70158),(t/=d/2)<1?c/2*(t*t*((1+(s*=1.525))*t-s))+b:c/2*((t-=2)*t*((1+(s*=1.525))*t+s)+2)+b}function easeOutInBack(t,b,c,d,s){return t<d/2?easeOutBack(2*t,b,c/2,d,s):easeInBack(2*t-d,b+c/2,c/2,d,s)}function easeInBounce(t,b,c,d){return c-easeOutBounce(d-t,0,c,d)+b}function easeOutBounce(t,b,c,d){return(t/=d)<1/2.75?c*(7.5625*t*t)+b:t<2/2.75?c*(7.5625*(t-=1.5/2.75)*t+.75)+b:t<2.5/2.75?c*(7.5625*(t-=2.25/2.75)*t+.9375)+b:c*(7.5625*(t-=2.625/2.75)*t+.984375)+b}function easeInOutBounce(t,b,c,d){return t<d/2?.5*easeInBounce(2*t,0,c,d)+b:.5*easeOutBounce(2*t-d,0,c,d)+.5*c+b}function easeOutInBounce(t,b,c,d){return t<d/2?easeOutBounce(2*t,b,c/2,d):easeInBounce(2*t-d,b+c/2,c/2,d)}var newDatas=[],depth=Number(thisProperty.value)!=thisProperty.value?thisProperty.value.length:1,datas=depth<2?new Array(thisProperty):thisProperty.value,i;if(dontStop){var totalTime=outPoint-inPoint,ratio=introTime/(introTime+endTime);introTime=totalTime*ratio,endTime=totalTime*(1-ratio)}if(relative)for(i=0;i<depth;i++)introDatas[i]+=datas[i],endDatas[i]+=datas[i];if(time<inPoint)for(i=0;i<depth;i++)newDatas[i]=introDatas[i];else if(time<inPoint+introTime)for(i=0;i<depth;i++)newDatas[i]=introTween(time-inPoint,introDatas[i],datas[i]-introDatas[i],introTime);else if(time>outPoint)for(i=0;i<depth;i++)newDatas[i]=endDatas[i];else if(time>outPoint-endTime)for(i=0;i<depth;i++)newDatas[i]=endTween(time+endTime-outPoint,datas[i],endDatas[i]-datas[i],endTime);else for(i=0;i<depth;i++)newDatas[i]=datas[i];value=depth<2?newDatas[0]:newDatas;";
+      "function easeNone(t,b,c,d){return(c*t)/d+b}function easeInQuad(t,b,c,d){return c*(t/=d)*t+b}function easeOutQuad(t,b,c,d){return-c*(t/=d)*(t-2)+b}function easeInOutQuad(t,b,c,d){if((t/=d/2)<1)return(c/2)*t*t+b;return(-c/2)*(--t*(t-2)-1)+b}function easeInCubic(t,b,c,d){return c*(t/=d)*t*t+b}function easeOutCubic(t,b,c,d){return c*((t=t/d-1)*t*t+1)+b}function easeInOutCubic(t,b,c,d){if((t/=d/2)<1)return(c/2)*t*t*t+b;return(c/2)*((t-=2)*t*t+2)+b}function easeOutInCubic(t,b,c,d){if(t<d/2)return easeOutCubic(t*2,b,c/2,d);return easeInCubic(t*2-d,b+c/2,c/2,d)}function easeInQuart(t,b,c,d){return c*(t/=d)*t*t*t+b}function easeOutQuart(t,b,c,d){return-c*((t=t/d-1)*t*t*t-1)+b}function easeInOutQuart(t,b,c,d){if((t/=d/2)<1)return(c/2)*t*t*t*t+b;return(-c/2)*((t-=2)*t*t*t-2)+b}function easeOutInQuart(t,b,c,d){if(t<d/2)return easeOutQuart(t*2,b,c/2,d);return easeInQuart(t*2-d,b+c/2,c/2,d)}function easeInQuint(t,b,c,d){return c*(t/=d)*t*t*t*t+b}function easeOutQuint(t,b,c,d){return c*((t=t/d-1)*t*t*t*t+1)+b}function easeInOutQuint(t,b,c,d){if((t/=d/2)<1)return(c/2)*t*t*t*t*t+b;return(c/2)*((t-=2)*t*t*t*t+2)+b}function easeOutInQuint(t,b,c,d){if(t<d/2)return easeOutQuint(t*2,b,c/2,d);return easeInQuint(t*2-d,b+c/2,c/2,d)}function easeInSine(t,b,c,d){return-c*Math.cos((t/d)*(Math.PI/2))+c+b}function easeOutSine(t,b,c,d){return c*Math.sin((t/d)*(Math.PI/2))+b}function easeInOutSine(t,b,c,d){return(-c/2)*(Math.cos((Math.PI*t)/d)-1)+b}function easeOutInSine(t,b,c,d){if(t<d/2)return easeOutSine(t*2,b,c/2,d);return easeInSine(t*2-d,b+c/2,c/2,d)}function easeInExpo(t,b,c,d){return t==0?b:c*Math.pow(2,10*(t/d-1))+b-c*0.001}function easeOutExpo(t,b,c,d){return t==d?b+c:c*1.001*(-Math.pow(2,(-10*t)/d)+1)+b}function easeInOutExpo(t,b,c,d){if(t==0)return b;if(t==d)return b+c;if((t/=d/2)<1)return(c/2)*Math.pow(2,10*(t-1))+b-c*0.0005;return(c/2)*1.0005*(-Math.pow(2,-10*--t)+2)+b}function easeOutInExpo(t,b,c,d){if(t<d/2)return easeOutExpo(t*2,b,c/2,d);return easeInExpo(t*2-d,b+c/2,c/2,d)}function easeInCirc(t,b,c,d){return-c*(Math.sqrt(1-(t/=d)*t)-1)+b}function easeOutCirc(t,b,c,d){return c*Math.sqrt(1-(t=t/d-1)*t)+b}function easeInOutCirc(t,b,c,d){if((t/=d/2)<1)return(-c/2)*(Math.sqrt(1-t*t)-1)+b;return(c/2)*(Math.sqrt(1-(t-=2)*t)+1)+b}function easeOutInCirc(t,b,c,d){if(t<d/2)return easeOutCirc(t*2,b,c/2,d);return easeInCirc(t*2-d,b+c/2,c/2,d)}function easeInElastic(t,b,c,d,a,p){var s;if(t==0)return b;if((t/=d)==1)return b+c;if(!p)p=d*0.3;if(!a||a<Math.abs(c)){a=c;s=p/4}else s=(p/(2*Math.PI))*Math.asin(c/a);return(-(a*Math.pow(2,10*(t-=1))*Math.sin(((t*d-s)*(2*Math.PI))/p))+b)}function easeOutElastic(t,b,c,d,a,p){var s;if(t==0)return b;if((t/=d)==1)return b+c;if(!p)p=d*0.3;if(!a||a<Math.abs(c)){a=c;s=p/4}else s=(p/(2*Math.PI))*Math.asin(c/a);return(a*Math.pow(2,-10*t)*Math.sin(((t*d-s)*(2*Math.PI))/p)+c+b)}function easeInOutElastic(t,b,c,d,a,p){var s;if(t==0)return b;if((t/=d/2)==2)return b+c;if(!p)p=d*(0.3*1.5);if(!a||a<Math.abs(c)){a=c;s=p/4}else s=(p/(2*Math.PI))*Math.asin(c/a);if(t<1)return(-0.5*(a*Math.pow(2,10*(t-=1))*Math.sin(((t*d-s)*(2*Math.PI))/p))+b);return(a*Math.pow(2,-10*(t-=1))*Math.sin(((t*d-s)*(2*Math.PI))/p)*0.5+c+b)}function easeOutInElastic(t,b,c,d,a,p){if(t<d/2)return easeOutElastic(t*2,b,c/2,d,a,p);return easeInElastic(t*2-d,b+c/2,c/2,d,a,p)}function easeInCushion(t,b,c,d,a,p){var s;if(t==0)return b;if((t/=d)==1)return b+c;if(!p)p=d*0.7;if(!a||a<Math.abs(c)){a=c;s=p/4}else s=(p/(2*Math.PI))*Math.asin(c/a);return(-(a*Math.pow(2,10*(t-=1))*Math.sin(((t*d-s)*(2*Math.PI))/p))+b)}function easeOutCushion(t,b,c,d,a,p){var s;if(t==0)return b;if((t/=d)==1)return b+c;if(!p)p=d*0.7;if(!a||a<Math.abs(c)){a=c;s=p/4}else s=(p/(2*Math.PI))*Math.asin(c/a);return(a*Math.pow(2,-10*t)*Math.sin(((t*d-s)*(2*Math.PI))/p)+c+b)}function easeInOutCushion(t,b,c,d,a,p){var s;if(t==0)return b;if((t/=d/2)==2)return b+c;if(!p)p=d*(0.7*1.5);if(!a||a<Math.abs(c)){a=c;s=p/4}else s=(p/(2*Math.PI))*Math.asin(c/a);if(t<1)return(-0.5*(a*Math.pow(2,10*(t-=1))*Math.sin(((t*d-s)*(2*Math.PI))/p))+b);return(a*Math.pow(2,-10*(t-=1))*Math.sin(((t*d-s)*(2*Math.PI))/p)*0.5+c+b)}function easeInBack(t,b,c,d,s){if(s==undefined)s=1.70158;return c*(t/=d)*t*((s+1)*t-s)+b}function easeOutBack(t,b,c,d,s){if(s==undefined)s=1.70158;return c*((t=t/d-1)*t*((s+1)*t+s)+1)+b}function easeInOutBack(t,b,c,d,s){if(s==undefined)s=1.70158;if((t/=d/2)<1)return(c/2)*(t*t*(((s*=1.525)+1)*t-s))+b;return(c/2)*((t-=2)*t*(((s*=1.525)+1)*t+s)+2)+b}function easeOutInBack(t,b,c,d,s){if(t<d/2)return easeOutBack(t*2,b,c/2,d,s);return easeInBack(t*2-d,b+c/2,c/2,d,s)}function easeInBounce(t,b,c,d){return c-easeOutBounce(d-t,0,c,d)+b}function easeOutBounce(t,b,c,d){if((t/=d)<1/2.75){return c*(7.5625*t*t)+b}else if(t<2/2.75){return c*(7.5625*(t-=1.5/2.75)*t+0.75)+b}else if(t<2.5/2.75){return c*(7.5625*(t-=2.25/2.75)*t+0.9375)+b}else{return c*(7.5625*(t-=2.625/2.75)*t+0.984375)+b}}function easeInOutBounce(t,b,c,d){if(t<d/2)return easeInBounce(t*2,0,c,d)*0.5+b;else return easeOutBounce(t*2-d,0,c,d)*0.5+c*0.5+b}function easeOutInBounce(t,b,c,d){if(t<d/2)return easeOutBounce(t*2,b,c/2,d);return easeInBounce(t*2-d,b+c/2,c/2,d)}var newDatas=[];var depth=Number(thisProperty.value)!=thisProperty.value?thisProperty.value.length:1;var datas=depth<2?new Array(thisProperty):thisProperty.value;var i;if(dontStop){var totalTime=outPoint-inPoint;var ratio=introTime/(introTime+endTime);introTime=totalTime*ratio;endTime=totalTime*(1-ratio)}if(relative){for(i=0;i<depth;i++){introDatas[i]+=datas[i];endDatas[i]+=datas[i]}}if(time<inPoint){for(i=0;i<depth;i++)newDatas[i]=introDatas[i]}else if(time<inPoint+introTime){for(i=0;i<depth;i++)newDatas[i]=introTween(time-inPoint,introDatas[i],datas[i]-introDatas[i],introTime);}else if(time>outPoint){for(i=0;i<depth;i++)newDatas[i]=endDatas[i]}else if(time>outPoint-endTime){for(i=0;i<depth;i++)newDatas[i]=endTween(time+endTime-outPoint,datas[i],endDatas[i]-datas[i],endTime);}else{for(i=0;i<depth;i++)newDatas[i]=datas[i]}if(depth<2)value=newDatas[0];else value=newDatas;";
 
     app.beginUndoGroup("TFS - apply tween");
     for (i = 0; i < properties.length; i++) {
@@ -606,16 +634,31 @@
 
     pal.margins = [10, 10, 10, 10];
 
+    var group = pal.add("group");
+    group.orientation = "row";
+    group.alignment = ["top", "right"];
+
+    var button = group.add("iconbutton", undefined, undefined, {
+      style: "toolbutton",
+    });
+    button.text = "Reset Presets";
+    button.onClick = function () {
+      const presets = _initialPresets;
+      savePresets(presets);
+      updatePresetDropdown(presets, 0);
+      pal.close();
+    };
+
     var input = pal.add("edittext", [0, 0, 500, 500], text, {
       multiline: true,
     });
     input.alignment = ["fill", "fill"];
 
-    var group = pal.add("group");
+    group = pal.add("group");
     group.orientation = "row";
     group.alignment = ["center", "bottom"];
 
-    var button = group.add("iconbutton", undefined, undefined, {
+    button = group.add("iconbutton", undefined, undefined, {
       style: "toolbutton",
     });
     button.text = "Save";
@@ -623,17 +666,6 @@
       if (callback(input.text)) {
         pal.close();
       }
-    };
-
-    button = group.add("iconbutton", undefined, undefined, {
-      style: "toolbutton",
-    });
-    button.text = "Reset";
-    button.onClick = function () {
-      const presets = _initialPresets;
-      savePresets(presets);
-      updatePresetDropdown(presets, 0);
-      pal.close();
     };
 
     pal.layout.layout(true);
@@ -759,8 +791,8 @@
   }
 
   /*
-		HELPERS
-	*/
+    HELPERS
+  */
 
   function getAbsolutePath(file) {
     var tfs = new File($.fileName);
